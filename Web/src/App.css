@@ -1,0 +1,9 @@
+/* App-specific overrides remain minimal when Tailwind utilities are used. */
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
