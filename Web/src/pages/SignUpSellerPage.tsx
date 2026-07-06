@@ -5,50 +5,55 @@ import {
   validateEmail,
   validateUsername,
 } from "../utils/validations";
+import authApi, {type FormType} from "../api/authApi";
 
-interface FormType {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptedPolicy: boolean;
-}
 export default function SignUpSellerPage() {
-  const [formData, setFormData] = useState<FormType>({
+  const [form, setform] = useState<FormType>({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     acceptedPolicy: false,
+    role: "seller",
   });
 
-  const handleSetFormData = (
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSetform = (
     field: keyof FormType,
     value: string | boolean,
   ) => {
-    setFormData((prevData) => ({
+    setform((prevData) => ({
       ...prevData,
       [field]: value,
     }));
   };
 
-  const passwordStrength = getPasswordStrength(formData.password);
+  const passwordStrength = getPasswordStrength(form.password);
   const usernameError =
-    formData.username.trim() && !validateUsername(formData.username)
+    form.username.trim() && !validateUsername(form.username)
       ? "Username must be at least 3 characters and contain only letters, numbers, or underscores."
       : "";
   const emailError =
-    formData.email.trim() && !validateEmail(formData.email)
+    form.email.trim() && !validateEmail(form.email)
       ? "Please enter a valid email address."
       : "";
   const confirmPasswordError =
-    formData.confirmPassword && formData.password !== formData.confirmPassword
+    form.confirmPassword && form.password !== form.confirmPassword
       ? "Passwords do not match."
       : "";
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Seller signup", formData);
+    setLoading(true);
+    try {
+      await authApi.register(form);
+    } catch (error : any) {
+      setError(error.response?.data?.detail || "An error occurred while signing up. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -85,9 +90,9 @@ export default function SignUpSellerPage() {
                 Username
                 <input
                   type="text"
-                  value={formData.username}
+                  value={form.username}
                   onChange={(e) =>
-                    handleSetFormData("username", e.target.value)
+                    handleSetform("username", e.target.value)
                   }
                   required
                   className={`mt-2 w-full rounded-3xl border bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 ${usernameError ? "border-red-300" : "border-slate-200"}`}
@@ -103,8 +108,8 @@ export default function SignUpSellerPage() {
                 Email
                 <input
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => handleSetFormData("email", e.target.value)}
+                  value={form.email}
+                  onChange={(e) => handleSetform("email", e.target.value)}
                   required
                   className={`mt-2 w-full rounded-3xl border bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 ${emailError ? "border-red-300" : "border-slate-200"}`}
                 />
@@ -119,9 +124,9 @@ export default function SignUpSellerPage() {
                 Password
                 <input
                   type="password"
-                  value={formData.password}
+                  value={form.password}
                   onChange={(e) =>
-                    handleSetFormData("password", e.target.value)
+                    handleSetform("password", e.target.value)
                   }
                   required
                   className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
@@ -150,9 +155,9 @@ export default function SignUpSellerPage() {
                 Confirm password
                 <input
                   type="password"
-                  value={formData.confirmPassword}
+                  value={form.confirmPassword}
                   onChange={(e) =>
-                    handleSetFormData("confirmPassword", e.target.value)
+                    handleSetform("confirmPassword", e.target.value)
                   }
                   required
                   className={`mt-2 w-full rounded-3xl border bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200 ${confirmPasswordError ? "border-red-300" : "border-slate-200"}`}
@@ -167,9 +172,9 @@ export default function SignUpSellerPage() {
               <label className="flex items-start gap-3 text-sm text-slate-700">
                 <input
                   type="checkbox"
-                  checked={formData.acceptedPolicy}
+                  checked={form.acceptedPolicy}
                   onChange={(e) =>
-                    handleSetFormData("acceptedPolicy", e.target.checked)
+                    handleSetform("acceptedPolicy", e.target.checked)
                   }
                   required
                   className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-500 focus:ring-orange-400"
@@ -178,11 +183,17 @@ export default function SignUpSellerPage() {
               </label>
 
               <button
+                disabled={loading}
                 type="submit"
-                className="w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+                className="w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
               >
-                Sign Up
+                {loading ? "Signing Up..." : "Sign Up"}
               </button>
+              {error && !loading && (
+                  <p className="mt-2 text-xs font-medium text-red-600">
+                    {error}
+                  </p>
+                )}
             </form>
 
             <div className="mt-6 text-center text-sm text-slate-500">

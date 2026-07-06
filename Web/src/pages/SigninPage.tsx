@@ -2,26 +2,31 @@ import { useNavigate } from "react-router-dom";
 import authApi from "../api/authApi";
 
 import { useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import axiosClient from "../api/axiosClient";
 
 export default function SigninPage() {
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSignin = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const navigate = useNavigate();
+    setLoading(true);
     try {
       await authApi.login({ email: email, password: password });
       const profile = await axiosClient.get("/auth/me"); 
       setUser(profile);
       navigate("/");
     } catch (err: any) {
-      toast.error(err.response?.data?.detail || "Login failed");
+      setError(err.response?.data?.detail || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,7 +71,7 @@ export default function SigninPage() {
                 Sign in to StoreF
               </h2>
             </div>
-            <form onSubmit={handleSignin} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <label className="block text-sm font-medium text-slate-700">
                 Email
                 <input
@@ -91,10 +96,16 @@ export default function SigninPage() {
 
               <button
                 type="submit"
-                className="w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+                disabled={loading}
+                className={`w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50`}
               >
-                Sign In
+              {loading ? "Signing In..." : "Sign In"}
               </button>
+              {error && !loading && (
+                  <p className="mt-2 text-xs font-medium text-red-600">
+                    {error}
+                  </p>
+              )}
             </form>
 
             <div className="mt-6 text-center text-sm text-slate-500">

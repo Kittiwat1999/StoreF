@@ -1,7 +1,16 @@
 import axiosClient from "./axiosClient";
 
+export interface FormType {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  acceptedPolicy: boolean;
+  role?: string;
+}
+
 const authApi = {
-  register: (data: { email: string; password: string; role: string }) =>
+  register: (data: FormType) =>
     axiosClient.post("/auth/register/", data),
 
   login: (data: { email: string; password: string }) =>

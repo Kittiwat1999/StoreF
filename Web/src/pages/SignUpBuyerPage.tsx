@@ -5,14 +5,7 @@ import {
   validateEmail,
   validateUsername,
 } from "../utils/validations";
-
-interface FormType {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptedPolicy: boolean;
-}
+import authApi, {type FormType} from "../api/authApi";
 
 export default function SignUpBuyerPage() {
   const [form, setForm] = useState<FormType>({
@@ -21,7 +14,10 @@ export default function SignUpBuyerPage() {
     password: "",
     confirmPassword: "",
     acceptedPolicy: false,
+    role: "buyer",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSetForm = (field: keyof FormType, value: string | boolean) => {
     setForm((prevData) => ({
@@ -43,9 +39,16 @@ export default function SignUpBuyerPage() {
       ? "Passwords do not match."
       : "";
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Buyer signup", form);
+    setLoading(true);
+    try {
+      await authApi.register(form);
+    } catch (error : any) {
+      setError(error.response?.data?.detail || "An error occurred while signing up. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -171,11 +174,17 @@ export default function SignUpBuyerPage() {
               </label>
 
               <button
+                disabled={loading}
                 type="submit"
-                className="w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+                className="w-full rounded-3xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
               >
-                Sign Up
+                {loading ? "Signing Up..." : "Sign Up"}
               </button>
+              {error && !loading && (
+                  <p className="mst-2 text-xs font-medium text-red-600">
+                    {error}
+                  </p>
+                )}
             </form>
 
             <div className="mt-6 text-center text-sm text-slate-500">
