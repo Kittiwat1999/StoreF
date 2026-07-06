@@ -7,43 +7,31 @@ import {
 } from "react";
 
 interface BuyerStateValue {
-  cartItems: Record<string, number>;
+  poroductonCart: Array<number>;
   cartCount: number;
   orderCount: number;
-  addToCartItem: (productId: string | number, quantity?: number) => void;
-  removeFromCartItem: (productId: string | number, quantity?: number) => void;
-  setCartItems: (items: Record<string, number>) => void;
+  addToCartItem: (productId: number) => void;
+  removeFromCartItem: (productId: number) => void;
+  setCartItems: (items: Array<number>) => void;
   addOrder: () => void;
   resetCart: () => void;
+  makeOrderReaded: () => void;
 }
 
 const BuyerStateContext = createContext<BuyerStateValue | undefined>(undefined);
 
 export function BuyerStateProvider({ children }: { children: ReactNode }) {
-  const [cartItems, setCartItems] = useState<Record<string, number>>({});
-  const [orderCount, setOrderCount] = useState(0);
+  const [poroductonCart, setCartItems] = useState<Array<number>>([3, 2, 6]);
+  const [orderCount, setOrderCount] = useState(3);
 
-  const cartCount = useMemo(() => Object.keys(cartItems).length, [cartItems]);
+  const cartCount = useMemo(() => poroductonCart.length, [poroductonCart]);
 
-  const addToCartItem = (productId: string | number, quantity = 1) => {
-    const key = String(productId);
-    setCartItems((current) => {
-      const currentQuantity = current[key] ?? 0;
-      return { ...current, [key]: currentQuantity + quantity };
-    });
+  const addToCartItem = (productId: number) => {
+    setCartItems([...poroductonCart, productId]);
   };
 
-  const removeFromCartItem = (productId: string | number, quantity = 1) => {
-    const key = String(productId);
-    setCartItems((current) => {
-      const currentQuantity = current[key] ?? 0;
-      const nextQuantity = currentQuantity - quantity;
-      if (nextQuantity <= 0) {
-        const { [key]: removed, ...rest } = current;
-        return rest;
-      }
-      return { ...current, [key]: nextQuantity };
-    });
+  const removeFromCartItem = (productId: number) => {
+    setCartItems((current) => current.filter((id) => id !== productId));
   };
 
   const addOrder = () => {
@@ -51,13 +39,19 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
   };
 
   const resetCart = () => {
-    setCartItems({});
+    setCartItems([]);
+  };
+
+  const makeOrderReaded = () => {
+    if (orderCount > 0) {
+      setOrderCount(orderCount - 1);
+    }
   };
 
   return (
     <BuyerStateContext.Provider
       value={{
-        cartItems,
+        poroductonCart,
         cartCount,
         orderCount,
         addToCartItem,
@@ -65,6 +59,7 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
         setCartItems,
         addOrder,
         resetCart,
+        makeOrderReaded,
       }}
     >
       {children}

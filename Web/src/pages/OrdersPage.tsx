@@ -4,6 +4,8 @@ import OrderDetailItem, {
   type OrderDetailItemType,
 } from "../components/buyers/OrderDetailItem";
 
+import { useBuyerState } from "../contexts/BuyerStateContext";
+
 const sampleOrders: OrderItem[] = [
   {
     id: 5421,
@@ -12,6 +14,7 @@ const sampleOrders: OrderItem[] = [
     total: 69.95,
     itemCount: 4,
     date: "2 days ago",
+    buyerReaded: false,
     orderItems: [
       { id: 1, title: "Notebook", quantity: 1, price: 12.99, image: "" },
       { id: 2, title: "Desk Lamp", quantity: 1, price: 28.99, image: "" },
@@ -25,6 +28,7 @@ const sampleOrders: OrderItem[] = [
     total: 129.49,
     itemCount: 2,
     date: "1 day ago",
+    buyerReaded: false,
     orderItems: [
       { id: 4, title: "Cushion cover", quantity: 1, price: 29.99, image: "" },
       { id: 5, title: "Wall art print", quantity: 1, price: 99.5, image: "" },
@@ -37,6 +41,7 @@ const sampleOrders: OrderItem[] = [
     total: 45.0,
     itemCount: 3,
     date: "5 days ago",
+    buyerReaded: false,
     orderItems: [
       { id: 6, title: "Ceramic mug", quantity: 2, price: 12.5, image: "" },
       { id: 7, title: "Wooden spoon", quantity: 1, price: 20.0, image: "" },
@@ -45,8 +50,18 @@ const sampleOrders: OrderItem[] = [
 ];
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<OrderItem[]>(sampleOrders);
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
+  const { makeOrderReaded } = useBuyerState();
 
+  const handleOrderClick = (order: OrderItem) => {
+    const modifiedOrder = { ...order, buyerReaded: true };
+    setOrders((prevOrders) =>
+      prevOrders.map((o) => (o.id === order.id ? modifiedOrder : o)),
+    );
+    setSelectedOrder(modifiedOrder);
+    makeOrderReaded();
+  };
   return (
     <main className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-7xl">
@@ -66,17 +81,17 @@ export default function OrdersPage() {
 
         <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
           <div>
-            {sampleOrders.length === 0 ? (
+            {orders.length === 0 ? (
               <div className="flex min-h-[220px] items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600 shadow-sm">
                 You do not have any orders yet.
               </div>
             ) : (
               <ul className="divide-y divide-slate-100 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                {sampleOrders.map((order) => (
+                {orders.map((order) => (
                   <OrderList
                     key={order.id}
                     item={order}
-                    onClick={() => setSelectedOrder(order)}
+                    onClick={() => handleOrderClick(order)}
                   />
                 ))}
               </ul>

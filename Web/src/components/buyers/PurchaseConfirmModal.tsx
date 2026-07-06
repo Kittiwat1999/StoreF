@@ -49,10 +49,10 @@ export default function PurchaseConfirmModal({
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-4">
                 <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-white">
-                  {item.image ? (
+                  {item.product.image ? (
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={item.product.image}
+                      alt={item.product.title}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -63,14 +63,14 @@ export default function PurchaseConfirmModal({
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-slate-900">
-                    {item.title}
+                    {item.product.title}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
                     Qty: {item.quantity}
                   </p>
                 </div>
                 <div className="text-sm font-semibold text-slate-900">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ${(item.product.price * item.quantity).toFixed(2)}
                 </div>
               </div>
             ))}

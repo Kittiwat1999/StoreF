@@ -53,9 +53,11 @@ export function BuyerNav({ onLogout, userName = "Kittiwat" }: BuyerNavProps) {
           >
             <FiShoppingCart className="text-xl text-slate-500" />
             <span className="sr-only">Notifications</span>
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-500 border-2 border-white rounded-full -top-2 -end-2">
-              {cartCount}
-            </div>
+            {cartCount > 0 && (
+              <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-500 border-2 border-white rounded-full -top-2 -end-2">
+                {cartCount}
+              </div>
+            )}
           </Link>
 
           <Link
@@ -64,9 +66,11 @@ export function BuyerNav({ onLogout, userName = "Kittiwat" }: BuyerNavProps) {
             aria-label="Orders"
           >
             <CgBox className="text-xl text-slate-500" />
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-500 border-2 border-white rounded-full -top-2 -end-2">
-              {orderCount}
-            </div>
+            {orderCount > 0 && (
+              <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-500 border-2 border-white rounded-full -top-2 -end-2">
+                {orderCount}
+              </div>
+            )}
           </Link>
 
           {/* User Greeting (no border) */}

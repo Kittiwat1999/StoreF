@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
   };
 
   const handleConfirmAddToCart = (quantity: number) => {
-    addToCartItem(product.id, quantity);
+    addToCartItem(product.id);
     toast.success(
       `${product.title} x ${quantity} has been added to your cart.`,
     );

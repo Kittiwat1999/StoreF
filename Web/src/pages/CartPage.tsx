@@ -9,30 +9,42 @@ import { toast } from "react-hot-toast";
 const initialCartItems: CartItem[] = [
   {
     id: 1,
-    title: "Product A",
-    price: 10.99,
+    productId: 1,
     quantity: 2,
-    image: "",
-    availableQuantity: 23,
-    isAvailabled: true,
+    product: {
+      id: 1,
+      title: "Product A",
+      price: 10.99,
+      image: "",
+      availableQuantity: 23,
+      isAvailabled: true,
+    }
   },
   {
     id: 2,
-    title: "Product B",
-    price: 15.49,
+    productId: 2,
     quantity: 1,
-    image: "",
-    availableQuantity: 0,
-    isAvailabled: true,
+    product: {
+      id: 2,
+      title: "Product B",
+      price: 15.49,
+      image: "",
+      availableQuantity: 0,
+      isAvailabled: true,
+    }
   },
   {
     id: 3,
-    title: "Product C",
-    price: 7.99,
+    productId: 3,
     quantity: 6,
-    image: "",
-    availableQuantity: 5,
-    isAvailabled: true,
+    product: {
+      id: 3,
+      title: "Product C",
+      price: 7.99,
+      image: "",
+      availableQuantity: 5,
+      isAvailabled: true
+    }
   },
 ];
 
@@ -49,12 +61,12 @@ export default function CartPage() {
   } = useBuyerState();
 
   useEffect(() => {
-    const initialCartMap = initialCartItems.reduce<Record<string, number>>(
+    const initialCartMap = initialCartItems.reduce<number[]>(
       (acc, item) => {
-        acc[String(item.id)] = item.quantity;
+        acc.push(item.id);
         return acc;
       },
-      {},
+      [],
     );
     setCartItems(initialCartMap);
   }, [setCartItems]);
@@ -63,7 +75,7 @@ export default function CartPage() {
     const currentItem = items.find((item) => item.id === id);
     if (!currentItem) return;
     if (
-      qty > initialCartItems.find((item) => item.id === id)?.availableQuantity!
+      qty > initialCartItems.find((item) => item.id === id)?.product.availableQuantity!
     ) {
       alert("Quantity exceeds available stock.");
       return;
@@ -74,16 +86,16 @@ export default function CartPage() {
     );
     const quantityDifference = qty - currentItem.quantity;
     if (quantityDifference > 0) {
-      addToCartItem(id, quantityDifference);
+      addToCartItem(id);
     } else if (quantityDifference < 0) {
-      removeFromCartItem(id, -quantityDifference);
+      removeFromCartItem(id);
     }
   };
 
   const handleRemove = (id: number) => {
     const removedItem = items.find((item) => item.id === id);
     if (removedItem) {
-      removeFromCartItem(id, removedItem.quantity);
+      removeFromCartItem(id);
     }
     setItems((prev) => prev.filter((item) => item.id !== id));
     setPendingRemove(null);
@@ -98,14 +110,14 @@ export default function CartPage() {
   };
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.quantity,
     0,
   );
   const shipping = items.length > 0 ? 4.99 : 0;
   const total = subtotal + shipping;
   const isEmpty = items.length === 0;
   const hasOutOfStockItems = items.some(
-    (item) => (item.availableQuantity ?? 0) <= 0,
+    (item) => (item.product.availableQuantity ?? 0) <= 0,
   );
 
   return (

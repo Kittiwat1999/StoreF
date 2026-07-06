@@ -5,6 +5,7 @@ export interface Product {
   image?: string;
   description?: string;
   availableQuantity: number;
+  isAvailabled?: boolean;
 }
 
 export default function ProductsCard({

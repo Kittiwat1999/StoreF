@@ -44,13 +44,13 @@ export default function RemoveConfirmModal({
             Are you sure you want to remove this item from your cart?
           </p>
           <p className="mt-3 text-base font-semibold text-slate-900">
-            {item.title}
+            {item.product.title}
           </p>
           <p className="mt-1 text-sm text-slate-500">
             Quantity: {item.quantity}
           </p>
           <p className="mt-1 text-sm font-semibold text-slate-900">
-            Total: ${(item.quantity * item.price).toFixed(2)}
+            Total: ${(item.quantity * item.product.price).toFixed(2)}
           </p>
         </div>
 
