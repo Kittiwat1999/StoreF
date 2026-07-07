@@ -1,10 +1,11 @@
 export interface Product {
-  id: number
-  title: string
-  price: number
-  image?: string
-  description?: string
-  availableQuantity: number
+  id: number;
+  title: string;
+  price: number;
+  image?: string;
+  description?: string;
+  availableQuantity: number;
+  isAvailabled?: boolean;
 }
 
 export const sampleProducts: Product[] = [

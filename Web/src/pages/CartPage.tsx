@@ -1,55 +1,14 @@
 import { FiShoppingBag } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import CartList, { type CartItem } from "../components/buyers/CartList";
+import CartList from "../components/buyers/CartList";
 import RemoveConfirmModal from "../components/buyers/RemoveConfirmModal";
 import PurchaseConfirmModal from "../components/buyers/PurchaseConfirmModal";
 import { useBuyerState } from "../contexts/BuyerStateContext";
 import { toast } from "react-hot-toast";
-
-const initialCartItems: CartItem[] = [
-  {
-    id: 1,
-    productId: 1,
-    quantity: 2,
-    product: {
-      id: 1,
-      title: "Product A",
-      price: 10.99,
-      image: "",
-      availableQuantity: 23,
-      isAvailabled: true,
-    }
-  },
-  {
-    id: 2,
-    productId: 2,
-    quantity: 1,
-    product: {
-      id: 2,
-      title: "Product B",
-      price: 15.49,
-      image: "",
-      availableQuantity: 0,
-      isAvailabled: true,
-    }
-  },
-  {
-    id: 3,
-    productId: 3,
-    quantity: 6,
-    product: {
-      id: 3,
-      title: "Product C",
-      price: 7.99,
-      image: "",
-      availableQuantity: 5,
-      isAvailabled: true
-    }
-  },
-];
+import {cartSample, type CartItem} from "../types/cart";
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>(initialCartItems);
+  const [items, setItems] = useState<CartItem[]>(cartSample);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
   const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const {
@@ -61,7 +20,7 @@ export default function CartPage() {
   } = useBuyerState();
 
   useEffect(() => {
-    const initialCartMap = initialCartItems.reduce<number[]>(
+    const initialCartMap = cartSample.reduce<number[]>(
       (acc, item) => {
         acc.push(item.id);
         return acc;
@@ -75,7 +34,7 @@ export default function CartPage() {
     const currentItem = items.find((item) => item.id === id);
     if (!currentItem) return;
     if (
-      qty > initialCartItems.find((item) => item.id === id)?.product.availableQuantity!
+      qty > cartSample.find((item) => item.id === id)?.product.availableQuantity!
     ) {
       alert("Quantity exceeds available stock.");
       return;

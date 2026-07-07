@@ -1,12 +1,4 @@
-export interface Product {
-  id: string | number;
-  title: string;
-  price: number;
-  image?: string;
-  description?: string;
-  availableQuantity: number;
-  isAvailabled?: boolean;
-}
+import { type Product} from '../../types/product';
 
 export default function ProductsCard({
   product,

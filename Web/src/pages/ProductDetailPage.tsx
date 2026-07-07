@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { type Product } from "../components/buyers/ProductsCard";
+import { type Product, sampleProducts } from "../types/product";
 import PurchaseOrderModal from "../components/buyers/PurchaseOrderModal";
 import AddToCartModal from "../components/buyers/AddToCartModal";
 import { useBuyerState } from "../contexts/BuyerStateContext";
-import { sampleProducts } from "../data/sampleProducts";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();

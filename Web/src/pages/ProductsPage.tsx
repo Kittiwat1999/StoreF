@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductsCard from "../components/buyers/ProductsCard";
-import { sampleProducts } from "../data/sampleProducts";
+import { sampleProducts } from "../types/product";
 
 // import axiosClient from "./axiosClient";
 

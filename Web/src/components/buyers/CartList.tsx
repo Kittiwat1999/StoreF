@@ -1,12 +1,5 @@
 import { FiTrash2 } from "react-icons/fi";
-import type { Product } from "./ProductsCard";
-
-export interface CartItem {
-  id: number;        
-  productId: number;
-  quantity: number;
-  product: Product;
-}
+import type { CartItem } from "../../types/cart";
 
 export default function CartList({
   item,
