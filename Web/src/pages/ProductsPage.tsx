@@ -53,14 +53,14 @@ export default function ProductsPage() {
       if (
         minPrice !== "" &&
         !Number.isNaN(parsedMinPrice) &&
-        product.price < parsedMinPrice
+        product.unitPrice < parsedMinPrice
       ) {
         return false;
       }
       if (
         maxPrice !== "" &&
         !Number.isNaN(parsedMaxPrice) &&
-        product.price > parsedMaxPrice
+        product.unitPrice > parsedMaxPrice
       ) {
         return false;
       }
@@ -68,8 +68,8 @@ export default function ProductsPage() {
     })
     .slice()
     .sort((a, b) => {
-      if (sortOrder === "price-asc") return a.price - b.price;
-      if (sortOrder === "price-desc") return b.price - a.price;
+      if (sortOrder === "price-asc") return a.unitPrice - b.unitPrice;
+      if (sortOrder === "price-desc") return b.unitPrice - a.unitPrice;
       if (sortOrder === "az") return a.title.localeCompare(b.title);
       if (sortOrder === "za") return b.title.localeCompare(a.title);
       return 0;

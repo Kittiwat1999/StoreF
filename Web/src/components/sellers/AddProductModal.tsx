@@ -4,7 +4,7 @@ import { validateFileSize } from "../../utils/validations";
 export interface ProductFormState {
   title: string;
   description: string;
-  price: string;
+  unitPrice: string;
   availableQuantity: string;
   file: File | null;
   imageURL: string;
@@ -15,7 +15,7 @@ interface AddProductModalProps {
     id: number;
     title: string;
     description: string;
-    price: number;
+    unitPrice: number;
     availableQuantity: number;
   } | null;
   form: ProductFormState;
@@ -101,8 +101,8 @@ export default function AddProductModal({
                 type="number"
                 min="0"
                 step="0.01"
-                value={form.price}
-                onChange={(event) => onChange("price", event.target.value)}
+                value={form.unitPrice}
+                onChange={(event) => onChange("unitPrice", event.target.value)}
                 className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none ring-0 focus:border-orange-400"
                 placeholder="0.00"
                 required

@@ -69,7 +69,7 @@ export default function CartPage() {
   };
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + item.product.unitPrice * item.quantity,
     0,
   );
   const shipping = items.length > 0 ? 4.99 : 0;

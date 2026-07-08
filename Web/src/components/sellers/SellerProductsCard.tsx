@@ -4,7 +4,7 @@ export interface SellerProduct {
   id: number;
   title: string;
   description: string;
-  price: number;
+  unitPrice: number;
   availableQuantity: number;
   imageUrl: string;
 }
@@ -52,7 +52,7 @@ export default function SellerProductsCard({
         <div className="flex items-center justify-between text-sm text-slate-600">
           <span>Price</span>
           <span className="font-semibold text-slate-900">
-            ${product.price.toFixed(2)}
+            ${product.unitPrice.toFixed(2)}
           </span>
         </div>
       </div>

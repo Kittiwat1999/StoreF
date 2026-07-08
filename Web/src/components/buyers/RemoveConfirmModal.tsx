@@ -1,4 +1,4 @@
-import type { CartItem } from "./CartList";
+import type { CartItem } from "../../types/cart";
 import { FiX } from "react-icons/fi";
 
 export interface RemoveConfirmModalProps {
@@ -50,7 +50,7 @@ export default function RemoveConfirmModal({
             Quantity: {item.quantity}
           </p>
           <p className="mt-1 text-sm font-semibold text-slate-900">
-            Total: ${(item.quantity * item.product.price).toFixed(2)}
+            Total: ${(item.quantity * item.product.unitPrice).toFixed(2)}
           </p>
         </div>
 

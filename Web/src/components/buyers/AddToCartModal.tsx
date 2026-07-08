@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiMinus, FiPlus, FiX } from "react-icons/fi";
-import type { Product } from "./ProductsCard";
+import type { Product } from "../../types/product";
 
 export interface AddToCartModalProps {
   open: boolean;
@@ -41,7 +41,7 @@ export default function AddToCartModal({
     }
   };
 
-  const total = product.price * quantity;
+  const total = product.unitPrice * quantity;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">

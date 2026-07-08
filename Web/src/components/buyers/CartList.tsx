@@ -39,7 +39,7 @@ export default function CartList({
           {item.product.title}
         </div>
         <div className="mt-1 text-sm text-slate-500">
-          ${item.product.price.toFixed(2)} each
+          ${item.product.unitPrice.toFixed(2)} each
         </div>
         {isUnavailable && !isStockConflict && (
           <span className="mt-2 inline-flex w-fit rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600">
@@ -78,7 +78,7 @@ export default function CartList({
 
       <div className="flex items-center justify-between gap-3 sm:ml-4 sm:min-w-[160px] sm:justify-end">
         <span className="text-sm font-semibold text-slate-800">
-          ${(item.product.price * item.quantity).toFixed(2)}
+          ${(item.product.unitPrice * item.quantity).toFixed(2)}
         </span>
         <button
           onClick={onRemove}

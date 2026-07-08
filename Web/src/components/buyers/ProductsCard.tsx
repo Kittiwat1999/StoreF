@@ -28,7 +28,7 @@ export default function ProductsCard({
             {product.title}
           </h3>
           <div className="text-sm font-medium text-slate-800">
-            ${product.price.toFixed(2)}
+            ${product.unitPrice.toFixed(2)}
           </div>
         </div>
         <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-600">

@@ -12,7 +12,7 @@ const initialProducts: SellerProduct[] = [
     id: 1,
     title: "Classic Mug",
     description: "A simple ceramic mug for everyday coffee.",
-    price: 12.5,
+    unitPrice: 12.5,
     availableQuantity: 25,
     imageUrl: "",
   },
@@ -20,7 +20,7 @@ const initialProducts: SellerProduct[] = [
     id: 2,
     title: "Notebook Set",
     description: "Premium notebooks for planning and journaling.",
-    price: 18,
+    unitPrice: 18,
     availableQuantity: 10,
     imageUrl: "",
   },
@@ -29,7 +29,7 @@ const initialProducts: SellerProduct[] = [
 const emptyForm = (): ProductFormState => ({
   title: "",
   description: "",
-  price: "",
+  unitPrice: "",
   availableQuantity: "",
   file: null,
   imageURL: "",
@@ -58,7 +58,7 @@ export default function SellerProductsPage() {
     setForm({
       title: product.title,
       description: product.description,
-      price: product.price.toString(),
+      unitPrice: product.unitPrice.toString(),
       availableQuantity: product.availableQuantity.toString(),
       file: null,
       imageURL: product.imageUrl,
@@ -75,7 +75,7 @@ export default function SellerProductsPage() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const price = Number(form.price);
+    const price = Number(form.unitPrice);
     const availableQuantity = Number(form.availableQuantity);
 
     if (
@@ -94,7 +94,7 @@ export default function SellerProductsPage() {
                 ...product,
                 title: form.title.trim(),
                 description: form.description.trim(),
-                price,
+                unitPrice: price,
                 availableQuantity,
                 imageUrl: form.imageURL,
               }
@@ -107,7 +107,7 @@ export default function SellerProductsPage() {
           id: Date.now(),
           title: form.title.trim(),
           description: form.description.trim(),
-          price,
+          unitPrice: price,
           availableQuantity,
           imageUrl: form.imageURL,
         },

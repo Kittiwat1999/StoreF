@@ -2,7 +2,7 @@ export interface OrderDetailItemType {
   id: string | number;
   title: string;
   quantity: number;
-  price: number;
+  unitPrice: number;
   image?: string;
 }
 
@@ -33,7 +33,7 @@ export default function OrderDetailItem({
       </div>
 
       <div className="w-24 text-right text-sm font-semibold text-slate-900">
-        ${(item.price * item.quantity).toFixed(2)}
+        ${(item.unitPrice * item.quantity).toFixed(2)}
       </div>
     </li>
   );
