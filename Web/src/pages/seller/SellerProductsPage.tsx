@@ -2,10 +2,10 @@ import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import SellerProductsCard, {
   type SellerProduct,
-} from "../components/sellers/SellerProductsCard";
+} from "../../components/sellers/SellerProductsCard";
 import AddProductModal, {
   type ProductFormState,
-} from "../components/sellers/AddProductModal";
+} from "../../components/sellers/AddProductModal";
 
 const initialProducts: SellerProduct[] = [
   {

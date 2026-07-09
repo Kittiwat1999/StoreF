@@ -1,10 +1,10 @@
 import { useState } from "react";
-import OrderList, { type OrderItem } from "../components/buyers/OrderList";
+import OrderList, { type OrderItem } from "../../components/buyers/OrderList";
 import OrderDetailItem, {
   type OrderDetailItemType,
-} from "../components/buyers/OrderDetailItem";
+} from "../../components/buyers/OrderDetailItem";
 
-import { useBuyerState } from "../contexts/BuyerStateContext";
+import { useBuyerState } from "../../contexts/BuyerStateContext";
 
 const sampleOrders: OrderItem[] = [
   {
@@ -16,9 +16,9 @@ const sampleOrders: OrderItem[] = [
     date: "2 days ago",
     buyerReaded: false,
     orderItems: [
-      { id: 1, title: "Notebook", quantity: 1, price: 12.99, image: "" },
-      { id: 2, title: "Desk Lamp", quantity: 1, price: 28.99, image: "" },
-      { id: 3, title: "Pens set", quantity: 2, price: 13.49, image: "" },
+      { id: 1, title: "Notebook", quantity: 1, unitPrice: 12.99, image: "" },
+      { id: 2, title: "Desk Lamp", quantity: 1, unitPrice: 28.99, image: "" },
+      { id: 3, title: "Pens set", quantity: 2, unitPrice: 13.49, image: "" },
     ],
   },
   {
@@ -30,8 +30,8 @@ const sampleOrders: OrderItem[] = [
     date: "1 day ago",
     buyerReaded: false,
     orderItems: [
-      { id: 4, title: "Cushion cover", quantity: 1, price: 29.99, image: "" },
-      { id: 5, title: "Wall art print", quantity: 1, price: 99.5, image: "" },
+      { id: 4, title: "Cushion cover", quantity: 1, unitPrice: 29.99, image: "" },
+      { id: 5, title: "Wall art print", quantity: 1, unitPrice: 99.5, image: "" },
     ],
   },
   {
@@ -43,8 +43,8 @@ const sampleOrders: OrderItem[] = [
     date: "5 days ago",
     buyerReaded: false,
     orderItems: [
-      { id: 6, title: "Ceramic mug", quantity: 2, price: 12.5, image: "" },
-      { id: 7, title: "Wooden spoon", quantity: 1, price: 20.0, image: "" },
+      { id: 6, title: "Ceramic mug", quantity: 2, unitPrice: 12.5, image: "" },
+      { id: 7, title: "Wooden spoon", quantity: 1, unitPrice: 20.0, image: "" },
     ],
   },
 ];

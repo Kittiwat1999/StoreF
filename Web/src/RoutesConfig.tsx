@@ -3,15 +3,16 @@ import { BuyerStateProvider } from "./contexts/BuyerStateContext";
 
 import BuyerNav from "./components/buyers/BuyerNav";
 import SellerNav from "./components/sellers/SellerNav";
-import ProductsPage from "./pages/ProductsPage";
-import ProductDetailPage from "./pages/ProductDetailPage";
-import CartPage from "./pages/CartPage";
-import OrdersPage from "./pages/OrdersPage";
+import ProductsPage from "./pages/buyer/ProductsPage";
+import ProductDetailPage from "./pages/buyer/ProductDetailPage";
+import CartPage from "./pages/buyer/CartPage";
+import OrdersPage from "./pages/buyer/OrdersPage";
 import SigninPage from "./pages/SigninPage";
 import SignUpBuyerPage from "./pages/SignUpBuyerPage";
 import SignUpSellerPage from "./pages/SignUpSellerPage";
-import SellerProductsPage from "./pages/SellerProductsPage";
-import SellerOrdersPage from "./pages/SellerOrdersPage";
+import SellerProductsPage from "./pages/seller/SellerProductsPage";
+import SellerOrdersPage from "./pages/seller/SellerOrdersPage";
+import ConfirmPurchaseProduct from "./pages/buyer/ConfirmPurchaseProduct";
 
 function BuyerLayout() {
   return (
@@ -46,6 +47,7 @@ export default function RoutesConfig() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/confirm/:productId" element={<ConfirmPurchaseProduct />} />
       </Route>
 
       <Route element={<SellerLayout />}>

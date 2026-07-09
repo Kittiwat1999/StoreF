@@ -1,6 +1,6 @@
 import SellerOrderItem, {
   type SellerOrderItem as SellerOrderItemType,
-} from "../components/sellers/SellerOrderItem";
+} from "../../components/sellers/SellerOrderItem";
 
 const sampleSellerOrders: SellerOrderItemType[] = [
   {

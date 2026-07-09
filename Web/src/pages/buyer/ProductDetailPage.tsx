@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { type Product, sampleProducts } from "../types/product";
-import PurchaseOrderModal from "../components/buyers/PurchaseOrderModal";
-import AddToCartModal from "../components/buyers/AddToCartModal";
-import { useBuyerState } from "../contexts/BuyerStateContext";
+import { sampleAvailableProducts } from "../../types/product";
+import AddToCartModal from "../../components/buyers/AddToCartModal";
+import { useBuyerState } from "../../contexts/BuyerStateContext";
+import PrepurchaseModal from "../../components/buyers/PrePurchaseModal";
+import { type ConfirmPurchaseItemType } from "../../components/buyers/ConfirmPurchaseItem";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const product = sampleProducts.find((item) => String(item.id) === id);
-  const { addToCartItem, addOrder } = useBuyerState();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [cartProduct, setCartProduct] = useState<Product | null>(null);
-  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const product = sampleAvailableProducts.find((item) => String(item.id) === id);
+  const { addToCartItem} = useBuyerState();
+
   const [addToCartModalOpen, setAddToCartModalOpen] = useState(false);
+  const [prePurchaseModalOpen, setPrePurchaseModalOpen] = useState(false);
 
   if (!product) {
     return (
@@ -38,20 +38,28 @@ export default function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    setCartProduct(product);
     setAddToCartModalOpen(true);
   };
 
-  const handlePurchase = () => {
-    setSelectedProduct(product);
-    setPurchaseModalOpen(true);
+  const handlePrePurchase = () => {
+    setPrePurchaseModalOpen(true);
   };
 
-  const handleConfirmPurchase = (quantity: number) => {
-    addOrder();
-    toast.success(`Purchased ${product.title} x${quantity}`);
-    setPurchaseModalOpen(false);
-    setSelectedProduct(null);
+  const handleConfirmPrePurchase = (quantity: number) => {
+    const currentItem : ConfirmPurchaseItemType = {
+      id: product.id,
+      title: product.title,
+      thumbnail: product.thumbnail,
+      unitPrice: product.unitPrice,
+      quantity: quantity,
+    };
+
+    localStorage.setItem("prePurchaseItem", JSON.stringify(currentItem));
+
+    setPrePurchaseModalOpen(false);
+    navigate(`/confirm/${product.id}`, {
+      state: currentItem
+    });
   };
 
   const handleConfirmAddToCart = (quantity: number) => {
@@ -60,7 +68,6 @@ export default function ProductDetailPage() {
       `${product.title} x ${quantity} has been added to your cart.`,
     );
     setAddToCartModalOpen(false);
-    setCartProduct(null);
   };
 
   return (
@@ -138,7 +145,7 @@ export default function ProductDetailPage() {
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                 <p className="text-sm text-slate-500">Price</p>
                 <p className="mt-1 text-3xl font-semibold text-slate-950">
-                  ${product.price.toFixed(2)}
+                  ${product.unitPrice.toFixed(2)}
                 </p>
               </div>
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
@@ -150,12 +157,12 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                onClick={handlePurchase}
-                className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-orange-500 px-6 text-sm font-semibold text-white transition hover:bg-orange-600"
-              >
-                Purchase
-              </button>
+                <button
+                  onClick={handlePrePurchase}
+                  className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-orange-500 px-6 text-sm font-semibold text-white transition hover:bg-orange-600"
+                >
+                  Purchase
+                </button>
               <button
                 onClick={handleAddToCart}
                 className="inline-flex h-14 flex-1 items-center justify-center rounded-full border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
@@ -167,23 +174,23 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {selectedProduct && (
-        <PurchaseOrderModal
-          open={purchaseModalOpen}
-          product={selectedProduct}
+      {prePurchaseModalOpen && (
+        <PrepurchaseModal
+          open={prePurchaseModalOpen}
+          product={product}
           initialQuantity={1}
-          availableQuantity={selectedProduct.availableQuantity}
-          onClose={() => setPurchaseModalOpen(false)}
-          onConfirm={handleConfirmPurchase}
+          availableQuantity={product.availableQuantity}
+          onClose={() => setPrePurchaseModalOpen(false)}
+          onConfirm={handleConfirmPrePurchase}
         />
       )}
 
-      {cartProduct && (
+      {addToCartModalOpen && (
         <AddToCartModal
           open={addToCartModalOpen}
-          product={cartProduct}
+          product={product}
           initialQuantity={1}
-          availableQuantity={cartProduct.availableQuantity}
+          availableQuantity={product.availableQuantity}
           onClose={() => setAddToCartModalOpen(false)}
           onConfirm={handleConfirmAddToCart}
         />

@@ -1,23 +1,22 @@
 import { FiShoppingBag } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import CartList from "../components/buyers/CartList";
-import RemoveConfirmModal from "../components/buyers/RemoveConfirmModal";
-import PurchaseConfirmModal from "../components/buyers/PurchaseConfirmModal";
-import { useBuyerState } from "../contexts/BuyerStateContext";
-import { toast } from "react-hot-toast";
-import {cartSample, type CartItem} from "../types/cart";
+import CartList from "../../components/buyers/CartList";
+import RemoveConfirmModal from "../../components/buyers/RemoveConfirmModal";
+// import {useNavigate} from "react-router-dom";
+
+import { useBuyerState } from "../../contexts/BuyerStateContext";
+// import { toast } from "react-hot-toast";
+import {cartSample, type CartItem} from "../../types/cart";
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>(cartSample);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
-  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
   const {
-    addOrder,
     addToCartItem,
     removeFromCartItem,
     setCartItems,
-    resetCart,
   } = useBuyerState();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const initialCartMap = cartSample.reduce<number[]>(
@@ -60,13 +59,25 @@ export default function CartPage() {
     setPendingRemove(null);
   };
 
-  const handleConfirmPurchase = () => {
-    addOrder();
-    resetCart();
-    setItems([]);
-    toast.success("Purchase confirmed");
-    setPurchaseModalOpen(false);
-  };
+  // const handleConfirmPurchase = () => {
+  //   addOrder();
+  //   resetCart();
+  //   setItems([]);
+  //   toast.success("Purchase confirmed");
+  //   setPurchaseModalOpen(false);
+  // };
+
+  // const handleConfirmPurchase = (quantity: number) => {
+  //   navigate(`/confirm/${product.id}`, {
+  //     state: {
+  //       productId: product.id,
+  //       quantity: quantity,
+  //       title: product.title,
+  //       thumbnail: product.thumbnail,
+  //       unitPrice: product.unitPrice,
+  //     },
+  //   });
+  // };
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.product.unitPrice * item.quantity,
@@ -147,7 +158,7 @@ export default function CartPage() {
               </div>
             </div>
             <button
-              onClick={() => setPurchaseModalOpen(true)}
+              // onClick={() => setPurchaseModalOpen(true)}
               disabled={isEmpty || hasOutOfStockItems}
               className="mt-6 w-full rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
@@ -173,13 +184,13 @@ export default function CartPage() {
         }
       />
 
-      <PurchaseConfirmModal
+      {/* <PurchaseConfirmModal
         open={purchaseModalOpen}
         items={items}
         total={total}
         onClose={() => setPurchaseModalOpen(false)}
         onConfirm={() => handleConfirmPurchase()}
-      />
+      /> */}
     </main>
   );
 }
