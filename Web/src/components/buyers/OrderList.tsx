@@ -1,5 +1,9 @@
 import type { MouseEvent } from "react";
+import type { Product } from "../../types/product";
 
+interface ModifiedProduct extends Product {
+  quantity:number
+}
 export interface OrderItem {
   id: string | number;
   title: string;
@@ -8,13 +12,7 @@ export interface OrderItem {
   itemCount: number;
   date: string;
   buyerReaded: boolean;
-  orderItems?: {
-    id: string | number;
-    title: string;
-    quantity: number;
-    price: number;
-    image?: string;
-  }[];
+  orderItems: ModifiedProduct[];
 }
 
 const statusStyles = {

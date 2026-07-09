@@ -1,13 +1,10 @@
-export interface OrderDetailItemType {
-  id: string | number;
-  title: string;
+import { type Product } from "../../types/product";
+export interface OrderDetailItemType extends Product {
   quantity: number;
-  unitPrice: number;
-  image?: string;
 }
 
 export default function OrderDetailItem({
-  item,
+  item
 }: {
   item: OrderDetailItemType;
 }) {
