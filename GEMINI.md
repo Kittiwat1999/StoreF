@@ -10,11 +10,11 @@ A marketplace web app connecting **Sellers** (list products) and **Buyers** (bro
 
 | Layer | Tech |
 |---|---|
-| Backend | Python, Django 6.0+ |
+| Backend | .NET (C#) |
 | Frontend | React + TypeScript + Vite |
 | Styling | Tailwind CSS v4 |
 | Icons | React Icons (`react-icons`) |
-| Database | PostgreSQL (via Docker) / SQLite (local dev) |
+| Database | SQL Server (MSSQL) |
 | Containerization | Docker & Docker Compose |
 | Proxy | Nginx (reverse proxy routing web and api) |
 
@@ -22,11 +22,11 @@ A marketplace web app connecting **Sellers** (list products) and **Buyers** (bro
 
 ```
 /Api
-  /Api             # Django configuration settings, urls, wsgi/asgi
-  manage.py
-  requirements.txt
+  /Api             # .NET API project configuration
+  appsettings.json
+  appsettings.Development.json
+  Program.cs
   Dockerfile
-  db.sqlite3
 
 /Web
   /src
@@ -76,7 +76,7 @@ docker compose down -v
 ```bash
 # Backend (from repository root)
 cd Api
-python manage.py runserver 0.0.0.0:8000
+dotnet run
 
 # Frontend (from repository root)
 cd Web
@@ -86,7 +86,7 @@ npm run dev
 
 ## Conventions & Style
 
-- Python: PEP8, clean views and settings
+- C#: .NET conventions, clean architecture with controllers/services, async/await patterns
 - TypeScript: strict mode, interfaces for objects, React functional components with hooks
 - Naming: `snake_case` (Python/DB), `camelCase` (TS/JS), `PascalCase` (React components, TS types)
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, etc.)

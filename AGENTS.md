@@ -10,29 +10,28 @@ A marketplace web app connecting **Sellers** (list products) and **Buyers** (bro
 
 | Layer | Tech |
 |---|---|
-| Backend | Python, Django 6.0+, Django REST Framework |
+| Backend | .NET (C#), ASP.NET Core |
 | Frontend | React + TypeScript + Vite |
 | Styling | Tailwind CSS v4 |
 | Icons | React Icons (`react-icons`) |
-| Database | PostgreSQL (via Docker) / SQLite (local dev) |
-| Auth | JWT via `djangorestframework-simplejwt` |
+| Database | SQL Server (MSSQL) |
+| Auth | JWT via System.IdentityModel.Tokens.Jwt |
 | Containerization | Docker & Docker Compose |
 | Proxy | Nginx (reverse proxy routing web and api) |
-| Testing | Django's built-in test framework / `pytest-django` |
+| Testing | xUnit / NUnit |
 
 ## Repo Structure
 
 ```
 /Api
-  /Api             # Django project config (settings, urls, wsgi/asgi)
-  /apps
-    /accounts      # custom User model, auth views/serializers, roles
-    /products      # Product model, serializers, viewsets
-    /orders        # Cart, Order, OrderItem, checkout logic
-  manage.py
-  requirements.txt
+  /Api             # .NET project config (Program.cs, appsettings)
+  /Controllers     # API controllers (Auth, Products, Orders, Cart)
+  /Models          # Entity models (User, Product, Order, OrderItem, Cart)
+  /Services        # Business logic services
+  /Data            # DbContext and migrations
+  appsettings.json
+  appsettings.Development.json
   Dockerfile
-  db.sqlite3
 
 /Web
   /src
@@ -54,29 +53,29 @@ GEMINI.md
 AGENTS.md
 ```
 
-## API Conventions (Django REST Framework)
+## API Conventions (ASP.NET Core)
 
 - Base path: `/api/`
-- Use DRF `ModelViewSet` + `DefaultRouter` for standard CRUD resources (products, cart items); use plain `APIView`/`generics` for non-CRUD actions (checkout, auth).
-- **Serializers** live in each app's `serializers.py` — one serializer per model minimum; use separate `Create`/`Detail` serializers only when the shapes genuinely differ (e.g. write vs. read fields).
-- **Permissions**: use DRF permission classes (`IsAuthenticated`, custom `IsSeller`, `IsOwner`) on each viewset — never rely on frontend role checks alone.
-- **Auth**: `djangorestframework-simplejwt`
-  - `POST /api/auth/register/` — includes role selection
-  - `POST /api/auth/login/` — returns access/refresh tokens
-  - `POST /api/auth/refresh/`
-  - `GET /api/auth/me/` — current user + role
-- **Products**: `/api/products/` (list/create), `/api/products/{id}/` (detail/update/delete), `/api/products/mine/` (seller's own listings) — ViewSet with `get_queryset()` filtering by role
-- **Cart**: `/api/cart/` (current buyer's cart), `/api/cart/items/` (add/update/remove line items)
-- **Checkout**: `POST /api/orders/checkout/` — plain `APIView`, wrapped in `transaction.atomic()` with `select_for_update()` on Product rows to prevent overselling under concurrent requests
-- **Orders**: `/api/orders/` (buyer history), `/api/orders/{id}/` (detail)
-- Responses: standard DRF/JSON; proper status codes (400 validation, 401 unauth, 403 wrong role/not owner, 404 not found)
-- Filtering: use `django-filter` (`DjangoFilterBackend`) for product list query params (`?min_price=&max_price=&search=`) rather than hand-rolled query parsing
+- Use ASP.NET Core controllers inheriting from `ControllerBase`; use standard HTTP methods (GET, POST, PUT, DELETE) with proper routing attributes.
+- **Data Transfer Objects (DTOs)** live in each feature folder — separate request/response DTOs when the shapes differ (e.g., `CreateProductDto`, `ProductDto`).
+- **Authorization**: use `[Authorize]` attributes with custom `AuthorizationHandler` for role-based checks (`Buyer`, `Seller`) — never rely on frontend role checks alone.
+- **Auth**: JWT via System.IdentityModel.Tokens.Jwt
+  - `POST /api/auth/register` — includes role selection, returns access/refresh tokens
+  - `POST /api/auth/login` — returns access/refresh tokens
+  - `POST /api/auth/refresh` — refresh token endpoint
+  - `GET /api/auth/me` — current user + role
+- **Products**: `GET /api/products` (list/filter), `POST /api/products` (create), `GET /api/products/{id}` (detail), `PUT /api/products/{id}` (update), `DELETE /api/products/{id}` (delete), `GET /api/products/mine` (seller's own listings)
+- **Cart**: `GET /api/cart` (current buyer's cart), `POST /api/cart/items` (add), `PUT /api/cart/items/{id}` (update), `DELETE /api/cart/items/{id}` (remove)
+- **Checkout**: `POST /api/orders/checkout` — transactional with row-level locking on Product records to prevent overselling
+- **Orders**: `GET /api/orders` (buyer history), `GET /api/orders/{id}` (detail)
+- Responses: standard JSON; proper HTTP status codes (400 validation, 401 unauth, 403 forbidden, 404 not found)
+- Filtering: use query parameters (`?minPrice=&maxPrice=&search=`) in controller actions for product list filtering
 
-## Backend Testing (DRF)
+## Backend Testing (.NET)
 
-- Use `rest_framework.test.APITestCase` / `APIClient` for endpoint tests, not just plain Django `TestCase`.
-- Priority coverage: role-based permission enforcement, checkout inventory decrement (incl. race conditions), ownership checks on product edit/delete, cart/order total calculations, input validation (negative quantity, price ≤ 0, purchase exceeding stock).
-- Run via `python manage.py test` or `pytest` if `pytest-django` is configured.
+- Use xUnit or NUnit with `HttpClient` for integration tests; `Moq` for mocking services.
+- Priority coverage: role-based authorization enforcement, checkout inventory decrement (incl. concurrency scenarios), ownership checks on product edit/delete, cart/order total calculations, input validation (negative quantity, price ≤ 0, purchase exceeding stock).
+- Run via `dotnet test` from the Api directory.
 
 ## Frontend Conventions
 
@@ -98,7 +97,7 @@ docker compose down -v
 ```bash
 # Backend (from repository root)
 cd Api
-python manage.py runserver 0.0.0.0:8000
+dotnet run
 
 # Frontend (from repository root)
 cd Web
@@ -108,9 +107,9 @@ npm run dev
 
 ## Conventions & Style
 
-- Python: PEP8, clean views/serializers/viewsets, keep business logic out of views where practical (use model methods or a small services layer for checkout logic)
-- Required packages (in `requirements.txt`): `djangorestframework`, `djangorestframework-simplejwt`, `django-filter`, `django-cors-headers`
+- C#: Follow Microsoft .NET naming conventions, clean architecture with separation of concerns (controllers, services, repositories), async/await for I/O operations
+- Required NuGet packages: `Microsoft.AspNetCore.Authentication.JwtBearer`, `EntityFrameworkCore`, `EntityFrameworkCore.SqlServer`, `xUnit` or `NUnit`
 - TypeScript: strict mode, interfaces for objects, React functional components with hooks
 - Naming: `snake_case` (Python/DB), `camelCase` (TS/JS), `PascalCase` (React components, TS types)
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, etc.)
-- Exclusions: Never commit `.env`, `node_modules/`, `db.sqlite3`, or `__pycache__/`
+- Exclusions: Never commit `.env`, `node_modules/`, `bin/`, `obj/`, or `.vs/`
