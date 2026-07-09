@@ -1,9 +1,12 @@
 import {type Product} from "./product";
+interface ModifiedProduct extends Product {
+  availableQuantity: number;
+}
 export interface CartItem {
   id: number;        
   productId: number;
   quantity: number;
-  product: Product;
+  product: ModifiedProduct;
 }
 
 export const cartSample: CartItem[] = [
@@ -14,7 +17,7 @@ export const cartSample: CartItem[] = [
     product: {
       id: 1,
       title: "Product A",
-      price: 10.99,
+      unitPrice: 10.99,
       image: "",
       availableQuantity: 23,
       isAvailabled: true,
@@ -27,7 +30,7 @@ export const cartSample: CartItem[] = [
     product: {
       id: 2,
       title: "Product B",
-      price: 15.49,
+      unitPrice: 15.49,
       image: "",
       availableQuantity: 0,
       isAvailabled: true,
@@ -40,7 +43,7 @@ export const cartSample: CartItem[] = [
     product: {
       id: 3,
       title: "Product C",
-      price: 7.99,
+      unitPrice: 7.99,
       image: "",
       availableQuantity: 5,
       isAvailabled: true
