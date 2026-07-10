@@ -5,19 +5,19 @@ interface CartItemProduct extends ProductBase {
 }
 
 export interface CartItem {
-  id: number;        
-  productId: number;
+  cartItemId: number;        
+  productId: string;
   quantity: number;
   product: CartItemProduct;
 }
 
 export const cartSample: CartItem[] = [
   {
-    id: 1,
-    productId: 1,
+    cartItemId: 1,
+    productId: "uuid1",
     quantity: 2,
     product: {
-      id: 1,
+      id: "uuid1",
       title: "Product A",
       unitPrice: 10.99,
       thumbnail: "",
@@ -26,11 +26,11 @@ export const cartSample: CartItem[] = [
     }
   },
   {
-    id: 2,
-    productId: 2,
+    cartItemId: 2,
+    productId: "uuid2",
     quantity: 1,
     product: {
-      id: 2,
+      id: "uuid2",
       title: "Product B",
       unitPrice: 15.49,
       thumbnail: "",
@@ -39,11 +39,11 @@ export const cartSample: CartItem[] = [
     }
   },
   {
-    id: 3,
-    productId: 3,
+    cartItemId: 3,
+    productId: "uuid3",
     quantity: 6,
     product: {
-      id: 3,
+      id: "uuid3",
       title: "Product C",
       unitPrice: 7.99,
       thumbnail: "",

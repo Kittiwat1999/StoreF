@@ -7,12 +7,12 @@ import {
 } from "react";
 
 interface BuyerStateValue {
-  poroductonCart: Array<number>;
+  poroductonCart: Array<string>;
   cartCount: number;
   orderCount: number;
-  addToCartItem: (productId: number) => void;
-  removeFromCartItem: (productId: number) => void;
-  setCartItems: (items: Array<number>) => void;
+  addToCartItem: (productId: string) => void;
+  removeFromCartItem: (productId: string) => void;
+  setCartItems: (items: Array<string>) => void;
   addOrder: () => void;
   resetCart: () => void;
   makeOrderReaded: () => void;
@@ -21,16 +21,16 @@ interface BuyerStateValue {
 const BuyerStateContext = createContext<BuyerStateValue | undefined>(undefined);
 
 export function BuyerStateProvider({ children }: { children: ReactNode }) {
-  const [poroductonCart, setCartItems] = useState<Array<number>>([3, 2, 6]);
+  const [poroductonCart, setCartItems] = useState<Array<string>>(["uuid2", "uuid1", "uuid3"]);
   const [orderCount, setOrderCount] = useState(3);
 
   const cartCount = useMemo(() => poroductonCart.length, [poroductonCart]);
 
-  const addToCartItem = (productId: number) => {
+  const addToCartItem = (productId: string) => {
     setCartItems([...poroductonCart, productId]);
   };
 
-  const removeFromCartItem = (productId: number) => {
+  const removeFromCartItem = (productId: string) => {
     setCartItems((current) => current.filter((id) => id !== productId));
   };
 

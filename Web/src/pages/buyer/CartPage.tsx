@@ -19,9 +19,9 @@ export default function CartPage() {
   // const navigate = useNavigate();
 
   useEffect(() => {
-    const initialCartMap = cartSample.reduce<number[]>(
+    const initialCartMap = cartSample.reduce<string[]>(
       (acc, item) => {
-        acc.push(item.id);
+        acc.push(item.product.id);
         return acc;
       },
       [],
@@ -30,32 +30,31 @@ export default function CartPage() {
   }, [setCartItems]);
 
   const handleQtyChange = (id: number, qty: number) => {
-    const currentItem = items.find((item) => item.id === id);
+    const currentItem = items.find((item) => item.cartItemId === id);
     if (!currentItem) return;
     if (
-      qty > cartSample.find((item) => item.id === id)?.product.availableQuantity!
+      qty > cartSample.find((item) => item.cartItemId === id)?.product.availableQuantity!
     ) {
       alert("Quantity exceeds available stock.");
       return;
     }
 
     setItems((prev) =>
-      prev.map((it) => (it.id === id ? { ...it, quantity: qty } : it)),
+      prev.map((it) => (it.cartItemId === id ? { ...it, quantity: qty } : it)),
     );
     const quantityDifference = qty - currentItem.quantity;
-    if (quantityDifference > 0) {
-      addToCartItem(id);
-    } else if (quantityDifference < 0) {
-      removeFromCartItem(id);
+    const currentProductId = items.find((item) => item.cartItemId == id)?.productId;
+    if (quantityDifference > 0 && currentProductId) {
+      addToCartItem(currentProductId);
     }
   };
 
   const handleRemove = (id: number) => {
-    const removedItem = items.find((item) => item.id === id);
+    const removedItem = items.find((item) => item.cartItemId === id)?.productId;
     if (removedItem) {
-      removeFromCartItem(id);
+      removeFromCartItem(removedItem);
     }
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setItems((prev) => prev.filter((item) => item.cartItemId !== id));
     setPendingRemove(null);
   };
 
@@ -129,9 +128,9 @@ export default function CartPage() {
               <ul className="divide-y divide-slate-100">
                 {items.map((it) => (
                   <CartList
-                    key={it.id}
+                    key={it.cartItemId}
                     item={it}
-                    onChange={(qty) => handleQtyChange(it.id as number, qty)}
+                    onChange={(qty) => handleQtyChange(it.cartItemId, qty)}
                     onRemove={() => setPendingRemove(it)}
                   />
                 ))}
@@ -180,7 +179,7 @@ export default function CartPage() {
         item={pendingRemove}
         onClose={() => setPendingRemove(null)}
         onConfirm={() =>
-          pendingRemove && handleRemove(pendingRemove.id as number)
+          pendingRemove && handleRemove(pendingRemove.cartItemId as number)
         }
       />
 

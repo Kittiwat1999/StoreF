@@ -16,9 +16,9 @@ const sampleOrders: OrderItem[] = [
     date: "2 days ago",
     buyerReaded: false,
     orderItems: [
-      { id: 1, title: "Notebook", quantity: 1, unitPrice: 12.99, thumbnail: "" },
-      { id: 2, title: "Desk Lamp", quantity: 1, unitPrice: 28.99, thumbnail: "" },
-      { id: 3, title: "Pens set", quantity: 2, unitPrice: 13.49, thumbnail: "" },
+      { id: "uuid1", title: "Notebook", quantity: 1, unitPrice: 12.99, thumbnail: "" },
+      { id: "uuid2", title: "Desk Lamp", quantity: 1, unitPrice: 28.99, thumbnail: "" },
+      { id: "uuid3", title: "Pens set", quantity: 2, unitPrice: 13.49, thumbnail: "" },
     ],
   },
   {
@@ -30,8 +30,8 @@ const sampleOrders: OrderItem[] = [
     date: "1 day ago",
     buyerReaded: false,
     orderItems: [
-      { id: 4, title: "Cushion cover", quantity: 1, unitPrice: 29.99, thumbnail: "" },
-      { id: 5, title: "Wall art print", quantity: 1, unitPrice: 99.5, thumbnail: "" },
+      { id: "uuid4", title: "Cushion cover", quantity: 1, unitPrice: 29.99, thumbnail: "" },
+      { id: "uuid5", title: "Wall art print", quantity: 1, unitPrice: 99.5, thumbnail: "" },
     ],
   },
   {
@@ -43,8 +43,8 @@ const sampleOrders: OrderItem[] = [
     date: "5 days ago",
     buyerReaded: false,
     orderItems: [
-      { id: 6, title: "Ceramic mug", quantity: 2, unitPrice: 12.5, thumbnail: "" },
-      { id: 7, title: "Wooden spoon", quantity: 1, unitPrice: 20.0, thumbnail: "" },
+      { id: "uuid6", title: "Ceramic mug", quantity: 2, unitPrice: 12.5, thumbnail: "" },
+      { id: "uuid7", title: "Wooden spoon", quantity: 1, unitPrice: 20.0, thumbnail: "" },
     ],
   },
 ];

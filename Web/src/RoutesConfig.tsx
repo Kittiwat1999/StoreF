@@ -47,7 +47,7 @@ export default function RoutesConfig() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/orders" element={<OrdersPage />} />
-        <Route path="/confirm/:productId" element={<ConfirmPurchaseProduct />} />
+        <Route path="/confirm" element={<ConfirmPurchaseProduct />} />
       </Route>
 
       <Route element={<SellerLayout />}>
