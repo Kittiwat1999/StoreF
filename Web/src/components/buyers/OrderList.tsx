@@ -1,7 +1,7 @@
 import type { MouseEvent } from "react";
-import type { Product } from "../../types/product";
+import type { ProductBase } from "../../types/product";
 
-interface ModifiedProduct extends Product {
+interface ModifiedProduct extends ProductBase {
   quantity:number
 }
 export interface OrderItem {

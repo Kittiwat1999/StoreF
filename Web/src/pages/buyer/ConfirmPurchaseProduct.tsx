@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import {useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OrderConfirmList, {
@@ -18,7 +18,7 @@ function getPrePurchaseItem(): ConfirmPurchaseItemType | null {
   }
 }
 export default function ConfirmPurchaseProduct() {
-  // const productId  = useParams<{ productId: string }>();
+  const productId  = useParams<{ productId: string }>();
   const location = useLocation();
   const [item, setItem] = useState<ConfirmPurchaseItemType>(
     location.state || null,

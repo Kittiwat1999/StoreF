@@ -1,5 +1,5 @@
-import { type Product } from "../../types/product";
-export interface OrderDetailItemType extends Product {
+import { type ProductBase } from "../../types/product";
+export interface OrderDetailItemType extends ProductBase {
   quantity: number;
 }
 
@@ -11,9 +11,9 @@ export default function OrderDetailItem({
   return (
     <li className="flex items-center gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
       <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100">
-        {item.image ? (
+        {item.thumbnail ? (
           <img
-            src={item.image}
+            src={item.thumbnail}
             alt={item.title}
             className="h-full w-full object-cover"
           />

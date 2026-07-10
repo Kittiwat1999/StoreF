@@ -21,9 +21,9 @@ export default function CartList({
       className={`flex flex-col gap-4 p-4 sm:flex-row sm:items-center ${isUnavailable ? "opacity-80" : ""}`}
     >
       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-200">
-        {item.product.image ? (
+        {item.product.thumbnail ? (
           <img
-            src={item.product.image}
+            src={item.product.thumbnail}
             alt={item.product.title}
             className="h-full w-full object-cover"
           />

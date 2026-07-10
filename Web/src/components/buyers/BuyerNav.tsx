@@ -22,7 +22,7 @@ export function BuyerNav({ onLogout, userName = "Kittiwat" }: BuyerNavProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-20 w-full bg-brand text-black shadow-md">
+    <nav className="sticky top-0 z-20 w-full bg-orange-400 text-black shadow-md">
       <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
         {/* Left: Logo (white color) */}
 

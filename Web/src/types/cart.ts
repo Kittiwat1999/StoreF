@@ -1,12 +1,14 @@
-import {type Product} from "./product";
-interface ModifiedProduct extends Product {
+import {type ProductBase} from "./product";
+interface CartItemProduct extends ProductBase {
   availableQuantity: number;
+  isAvailabled: boolean;
 }
+
 export interface CartItem {
   id: number;        
   productId: number;
   quantity: number;
-  product: ModifiedProduct;
+  product: CartItemProduct;
 }
 
 export const cartSample: CartItem[] = [
@@ -18,7 +20,7 @@ export const cartSample: CartItem[] = [
       id: 1,
       title: "Product A",
       unitPrice: 10.99,
-      image: "",
+      thumbnail: "",
       availableQuantity: 23,
       isAvailabled: true,
     }
@@ -31,7 +33,7 @@ export const cartSample: CartItem[] = [
       id: 2,
       title: "Product B",
       unitPrice: 15.49,
-      image: "",
+      thumbnail: "",
       availableQuantity: 0,
       isAvailabled: true,
     }
@@ -44,7 +46,7 @@ export const cartSample: CartItem[] = [
       id: 3,
       title: "Product C",
       unitPrice: 7.99,
-      image: "",
+      thumbnail: "",
       availableQuantity: 5,
       isAvailabled: true
     }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams} from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { sampleAvailableProducts } from "../../types/product";
+import { sampleProducts } from "../../types/product";
 import AddToCartModal from "../../components/buyers/AddToCartModal";
 import { useBuyerState } from "../../contexts/BuyerStateContext";
 import PrepurchaseModal from "../../components/buyers/PrePurchaseModal";
@@ -10,7 +10,7 @@ import { type ConfirmPurchaseItemType } from "../../components/buyers/ConfirmPur
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const product = sampleAvailableProducts.find((item) => String(item.id) === id);
+  const product = sampleProducts.find((item) => String(item.id) === id);
   const { addToCartItem} = useBuyerState();
 
   const [addToCartModalOpen, setAddToCartModalOpen] = useState(false);
