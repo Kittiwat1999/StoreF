@@ -1,18 +1,24 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 
+import {type CartItem} from '../types/cart'
+import cartApi from "../api/cartApi";
+import { saveToLocalStorage, loadFromLocalStorage } from "../utils/localStorageHelper";
+
 interface BuyerStateValue {
-  poroductonCart: Array<string>;
+  // poroductonCart: Array<string>;
   cartCount: number;
   orderCount: number;
-  addToCartItem: (productId: string) => void;
+  cartItems: CartItem[];
+  addToCartItem: (item: CartItem) => void;
   removeFromCartItem: (productId: string) => void;
-  setCartItems: (items: Array<string>) => void;
+  setCartItems: (items: CartItem[]) => void;
   addOrder: () => void;
   resetCart: () => void;
   makeOrderReaded: () => void;
@@ -21,17 +27,44 @@ interface BuyerStateValue {
 const BuyerStateContext = createContext<BuyerStateValue | undefined>(undefined);
 
 export function BuyerStateProvider({ children }: { children: ReactNode }) {
-  const [poroductonCart, setCartItems] = useState<Array<string>>(["uuid2", "uuid1", "uuid3"]);
+  // const [poroductonCart, setCartItems] = useState<Array<string>>(["uuid2", "uuid1", "uuid3"]);
   const [orderCount, setOrderCount] = useState(3);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const cartCount = useMemo(() => cartItems.length, [cartItems]);
 
-  const cartCount = useMemo(() => poroductonCart.length, [poroductonCart]);
+  useEffect(() => {
+    const items = loadFromLocalStorage<CartItem[]>("cartItems");
+    if (items && items.length) {
+      setCartItems(items);
+    } else {
+      const response = cartApi.getCart();
+      saveToLocalStorage<CartItem[]>("cartItems", response);
+      setCartItems(response);
+    }
+  }, []);
 
-  const addToCartItem = (productId: string) => {
-    setCartItems([...poroductonCart, productId]);
+  const addToCartItem = (item: CartItem) => {
+    setCartItems((prev) => {
+      const existing = prev.find((it) => it.productId === item.productId);
+      const newArr = !existing
+        ? [...prev, item]
+        : prev.map((it) =>
+            it.cartItemId === existing.cartItemId
+              ? { ...it, quantity: it.quantity + item.quantity }
+              : it
+          );
+      saveToLocalStorage<CartItem[]>("cartItems", newArr);
+      return newArr;
+    });
   };
 
   const removeFromCartItem = (productId: string) => {
-    setCartItems((current) => current.filter((id) => id !== productId));
+    setCartItems((current) => {
+      const newArr = current.filter((it) => it.productId !== productId);
+      saveToLocalStorage<CartItem[]>("cartItems", newArr);
+      return newArr;
+    });
+
   };
 
   const addOrder = () => {
@@ -40,6 +73,7 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
 
   const resetCart = () => {
     setCartItems([]);
+    saveToLocalStorage<CartItem[]>("cartItems", []);
   };
 
   const makeOrderReaded = () => {
@@ -48,12 +82,14 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
+
   return (
     <BuyerStateContext.Provider
       value={{
-        poroductonCart,
+        // poroductonCart,
         cartCount,
         orderCount,
+        cartItems,
         addToCartItem,
         removeFromCartItem,
         setCartItems,

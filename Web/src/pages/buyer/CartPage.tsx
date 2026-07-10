@@ -2,38 +2,29 @@ import { FiShoppingBag } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import CartList from "../../components/buyers/CartList";
 import RemoveConfirmModal from "../../components/buyers/RemoveConfirmModal";
-// import {useNavigate} from "react-router-dom";
-
+// import cartApi from "../../api/cartApi";
 import { useBuyerState } from "../../contexts/BuyerStateContext";
 // import { toast } from "react-hot-toast";
-import {cartSample, type CartItem} from "../../types/cart";
+import {type CartItem} from "../../types/cart";
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>(cartSample);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
   const {
     addToCartItem,
     removeFromCartItem,
-    setCartItems,
+    cartItems,
   } = useBuyerState();
-  // const navigate = useNavigate();
 
   useEffect(() => {
-    const initialCartMap = cartSample.reduce<string[]>(
-      (acc, item) => {
-        acc.push(item.product.id);
-        return acc;
-      },
-      [],
-    );
-    setCartItems(initialCartMap);
-  }, [setCartItems]);
+    setItems(cartItems);
+  }, [items]);
 
   const handleQtyChange = (id: number, qty: number) => {
     const currentItem = items.find((item) => item.cartItemId === id);
     if (!currentItem) return;
     if (
-      qty > cartSample.find((item) => item.cartItemId === id)?.product.availableQuantity!
+      qty > items.find((item) => item.cartItemId === id)?.product.availableQuantity!
     ) {
       alert("Quantity exceeds available stock.");
       return;
@@ -43,9 +34,9 @@ export default function CartPage() {
       prev.map((it) => (it.cartItemId === id ? { ...it, quantity: qty } : it)),
     );
     const quantityDifference = qty - currentItem.quantity;
-    const currentProductId = items.find((item) => item.cartItemId == id)?.productId;
-    if (quantityDifference > 0 && currentProductId) {
-      addToCartItem(currentProductId);
+    const currnetProduct = items.find((item) => item.cartItemId == id);
+    if (quantityDifference > 0 && currnetProduct) {
+      addToCartItem(currnetProduct);
     }
   };
 

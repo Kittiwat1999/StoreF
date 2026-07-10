@@ -57,13 +57,27 @@ export default function ProductDetailPage() {
     localStorage.setItem("prePurchaseItem", JSON.stringify(currentItem));
 
     setPrePurchaseModalOpen(false);
-    navigate(`/confirm/${product.id}`, {
+    navigate("/confirm", {
       state: currentItem
     });
   };
 
   const handleConfirmAddToCart = (quantity: number) => {
-    addToCartItem(product.id);
+    addToCartItem(
+      {
+        cartItemId : Date.now(),
+        productId: product.id,
+        quantity: quantity,
+        product:{
+          id: product.id,
+          title: product.title,
+          unitPrice: product.unitPrice,
+          thumbnail: product.thumbnail,
+          availableQuantity: product.availableQuantity,
+          isAvailabled: true,
+        }
+      }
+    );
     toast.success(
       `${product.title} x ${quantity} has been added to your cart.`,
     );

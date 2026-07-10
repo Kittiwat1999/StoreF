@@ -1,5 +1,5 @@
-import {useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import {useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OrderConfirmList, {
   type ConfirmPurchaseItemType,
@@ -18,25 +18,18 @@ function getPrePurchaseItem(): ConfirmPurchaseItemType | null {
   }
 }
 export default function ConfirmPurchaseProduct() {
-  const productId  = useParams<{ productId: string }>();
-  const location = useLocation();
-  const [item, setItem] = useState<ConfirmPurchaseItemType>(
-    location.state || null,
+  const [item, setItem] = useState<ConfirmPurchaseItemType | null>(
+    getPrePurchaseItem()
   );
+
+  useEffect(() => {
+    setItem(getPrePurchaseItem());
+  }, []);
+
   const navigate = useNavigate();
   const [shipping] = useState(20);
-  // if(!item) {
-  //   setItem(getPrePurchaseItem());
-  // }
-
-  // const calculateTotal = () => {
-  //   if (item) {
-  //     const productTotal = item.unitPrice * item.quantity;
-  //     setTotal(productTotal + shipping);
-  //   } else {
-  //     setTotal(0);
-  //   }
-  // };
+  const subTotal = item ? item.unitPrice * item.quantity : undefined;
+  const total = item && subTotal ? subTotal + shipping : undefined;
 
   const onConfirm = () => {
     console.log("Purchase confirmed!");
@@ -44,10 +37,6 @@ export default function ConfirmPurchaseProduct() {
     navigate("/orders");
   };
 
-  const subTotal = item.unitPrice * item.quantity;
-  const total = subTotal + shipping;
-
-  // calculateTotal();
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6">
@@ -78,7 +67,7 @@ export default function ConfirmPurchaseProduct() {
               <div className="mt-5 space-y-3 text-sm text-slate-600">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subTotal.toFixed(2)}</span>
+                  <span>{subTotal && subTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -86,7 +75,7 @@ export default function ConfirmPurchaseProduct() {
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{total && total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
