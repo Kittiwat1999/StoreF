@@ -9,6 +9,7 @@ import {type CartItem} from "../../types/cart";
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [itemsCheckedList, setItemCheckedList] = useState<number[]>([]);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
   const {
     addToCartItem,
@@ -20,7 +21,7 @@ export default function CartPage() {
     setItems(cartItems);
   }, [addToCartItem]);
 
-  const handleQtyChange = (id: number, qty: number) => {
+  const handleQtyChange = (id: number, qty: number) => {  
     const currentItem = items.find((item) => item.cartItemId === id);
     if (!currentItem) return;
     if (
@@ -44,6 +45,17 @@ export default function CartPage() {
     setItems((prev) => prev.filter((item) => item.cartItemId !== id));
     setPendingRemove(null);
   };
+
+  const handleCheckedItem = (id: number, checked: boolean) => {
+    setItemCheckedList((prev) => {
+      if (checked) {
+        return prev.includes(id) ? prev : [...prev, id];
+      }
+      return prev.filter((itemId) => itemId !== id);
+    });
+
+  };
+    console.log(itemsCheckedList);
 
   // const handleConfirmPurchase = () => {
   //   addOrder();
@@ -116,6 +128,8 @@ export default function CartPage() {
                 {items.map((it) => (
                   <CartList
                     key={it.cartItemId}
+                    checked={itemsCheckedList.includes(it.cartItemId)}
+                    onItemChecked={handleCheckedItem}
                     item={it}
                     onChange={(qty) => handleQtyChange(it.cartItemId, qty)}
                     onRemove={() => setPendingRemove(it)}
