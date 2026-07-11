@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { loadFromLocalStorage } from "../../utils/localStorageHelper";
 import { useBuyerState } from "../../contexts/BuyerStateContext";
 
 import OrderConfirmList, {
@@ -10,21 +9,16 @@ import OrderConfirmList, {
 export interface ConfirmPurchaseType {
   items: ConfirmPurchaseItemType;
 }
+
 export default function CartConfirmPurchase() {
-  const [selectedItems, setSelectedItem] = useState<number[] | null>(
-    loadFromLocalStorage<number[]>("purchaseItemsSelected"),
-  );
   const [prePurchaseItem, setPrepurchaseItem] = useState<
     ConfirmPurchaseItemType[]
   >([]);
-  const { cartItems } = useBuyerState();
+  const { cartItems, selectedCartItems } = useBuyerState();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedSelected = loadFromLocalStorage<number[]>(
-      "purchaseItemsSelected",
-    );
-    setSelectedItem(storedSelected);
+    const storedSelected = selectedCartItems;
 
     const mappedItems = cartItems
       .filter((item) => storedSelected?.includes(item.cartItemId))
@@ -85,10 +79,13 @@ export default function CartConfirmPurchase() {
               <div className="mt-5 space-y-3 text-sm text-slate-600">
                 <div className="flex justify-between">
                   <span>
-                    Item{selectedItems && selectedItems?.length > 1 ? "s" : ""}{" "}
+                    Item
+                    {selectedCartItems && selectedCartItems?.length > 1
+                      ? "s"
+                      : ""}{" "}
                     count
                   </span>
-                  <span>{selectedItems?.length}</span>
+                  <span>{selectedCartItems?.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Subtotal</span>

@@ -1,25 +1,24 @@
 import { FiShoppingBag } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CartList from "../../components/buyers/CartList";
 import RemoveConfirmModal from "../../components/buyers/RemoveConfirmModal";
 import { useBuyerState } from "../../contexts/BuyerStateContext";
 import { type CartItem } from "../../types/cart";
-import { saveToLocalStorage } from "../../utils/localStorageHelper";
 import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [itemsSelectedList, setItemSlectedList] = useState<number[]>([]);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
-  const { addToCartItem, removeFromCartItem, cartItems } = useBuyerState();
+  const {
+    addToCartItem,
+    removeFromCartItem,
+    cartItems,
+    handleCartItemSelect,
+    selectedCartItems,
+  } = useBuyerState();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setItems(cartItems);
-  }, [addToCartItem]);
-
   const handleQtyChange = (id: number, qty: number) => {
-    const currentItem = items.find((item) => item.cartItemId === id);
+    const currentItem = cartItems.find((item) => item.cartItemId === id);
     if (!currentItem) return;
     if (qty > currentItem.product.availableQuantity) {
       alert("Quantity exceeds available stock.");
@@ -33,33 +32,20 @@ export default function CartPage() {
   };
 
   const handleRemove = (id: number) => {
-    const removedItem = items.find((item) => item.cartItemId === id)?.productId;
-    if (removedItem) {
-      removeFromCartItem(removedItem);
-    }
-    setItems((prev) => prev.filter((item) => item.cartItemId !== id));
+    removeFromCartItem(id);
+    handleCartItemSelect(id, false);
     setPendingRemove(null);
   };
 
-  const handleCheckedItem = (id: number, checked: boolean) => {
-    setItemSlectedList((prev) => {
-      if (checked) {
-        return prev.includes(id) ? prev : [...prev, id];
-      }
-      return prev.filter((itemId) => itemId !== id);
-    });
-  };
-
   const handlePurchase = () => {
-    saveToLocalStorage<number[]>("purchaseItemsSelected", itemsSelectedList);
     navigate("/cart/confirm-purchase");
   };
 
-  const total = items
-    .filter((item) => itemsSelectedList.includes(item.cartItemId))
+  const total = cartItems
+    .filter((cartItems) => selectedCartItems.includes(cartItems.cartItemId))
     .reduce((sum, item) => sum + item.product.unitPrice * item.quantity, 0);
-  const isEmpty = items.length === 0;
-  const hasOutOfStockItems = items.some(
+  const isEmpty = cartItems.length === 0;
+  const hasOutOfStockItems = cartItems.some(
     (item) => (item.product.availableQuantity ?? 0) <= 0,
   );
 
@@ -78,7 +64,7 @@ export default function CartPage() {
           </div>
           {!isEmpty && (
             <div className="rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
-              {items.length} {items.length === 1 ? "item" : "items"}
+              {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
             </div>
           )}
         </div>
@@ -100,11 +86,11 @@ export default function CartPage() {
               </div>
             ) : (
               <ul className="divide-y divide-slate-100">
-                {items.map((it) => (
+                {cartItems.map((it) => (
                   <CartList
                     key={it.cartItemId}
-                    checked={itemsSelectedList.includes(it.cartItemId)}
-                    onItemChecked={handleCheckedItem}
+                    checked={selectedCartItems.includes(it.cartItemId)}
+                    onItemChecked={handleCartItemSelect}
                     item={it}
                     onChange={(qty) => handleQtyChange(it.cartItemId, qty)}
                     onRemove={() => setPendingRemove(it)}
@@ -121,7 +107,7 @@ export default function CartPage() {
             <div className="mt-5 space-y-3 text-sm text-slate-600">
               <div className="flex justify-between">
                 <span>Selected</span>
-                <span>{itemsSelectedList.length}</span>
+                <span>{selectedCartItems.length}</span>
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
                 <span>Total</span>
@@ -130,17 +116,24 @@ export default function CartPage() {
             </div>
             <button
               onClick={handlePurchase}
-              disabled={isEmpty || hasOutOfStockItems}
+              disabled={
+                isEmpty || hasOutOfStockItems || selectedCartItems.length == 0
+              }
               className="mt-6 w-full rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              {hasOutOfStockItems ? "Unavailable for purchase" : "Purchase"}
+              {hasOutOfStockItems || selectedCartItems.length == 0
+                ? "Unavailable for purchase"
+                : "Purchase"}
             </button>
             <p
               className={`mt-3 text-xs ${hasOutOfStockItems ? "text-red-500" : "text-slate-500"}`}
             >
-              {hasOutOfStockItems
-                ? "Some items in your cart are out of stock and cannot be purchased yet."
-                : "Secure checkout with your preferred payment method."}
+              {hasOutOfStockItems ??
+                "Some items in your cart are out of stock and cannot be purchased yet."}
+              {selectedCartItems.length == 0 ? "Please select items" : ""}
+              {!hasOutOfStockItems && selectedCartItems.length != 0
+                ? "Secure checkout with your preferred payment method."
+                : ""}
             </p>
           </aside>
         </div>
@@ -151,7 +144,7 @@ export default function CartPage() {
         item={pendingRemove}
         onClose={() => setPendingRemove(null)}
         onConfirm={() =>
-          pendingRemove && handleRemove(pendingRemove.cartItemId as number)
+          pendingRemove && handleRemove(pendingRemove.cartItemId)
         }
       />
     </main>

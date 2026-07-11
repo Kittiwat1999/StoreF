@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { sampleProducts } from "../../types/product";
 import AddToCartModal from "../../components/buyers/AddToCartModal";
@@ -9,9 +9,10 @@ import { type ConfirmPurchaseItemType } from "../../components/buyers/ConfirmPur
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { addToCartItem } = useBuyerState();
+
   const navigate = useNavigate();
   const product = sampleProducts.find((item) => String(item.id) === id);
-  const { addToCartItem} = useBuyerState();
 
   const [addToCartModalOpen, setAddToCartModalOpen] = useState(false);
   const [prePurchaseModalOpen, setPrePurchaseModalOpen] = useState(false);
@@ -46,7 +47,7 @@ export default function ProductDetailPage() {
   };
 
   const handleConfirmPrePurchase = (quantity: number) => {
-    const currentItem : ConfirmPurchaseItemType = {
+    const currentItem: ConfirmPurchaseItemType = {
       id: product.id,
       title: product.title,
       thumbnail: product.thumbnail,
@@ -58,26 +59,25 @@ export default function ProductDetailPage() {
 
     setPrePurchaseModalOpen(false);
     navigate("/confirm", {
-      state: currentItem
+      state: currentItem,
     });
   };
 
   const handleConfirmAddToCart = (quantity: number) => {
-    addToCartItem(
-      {
-        cartItemId : Date.now(),
-        productId: product.id,
-        quantity: quantity,
-        product:{
-          id: product.id,
-          title: product.title,
-          unitPrice: product.unitPrice,
-          thumbnail: product.thumbnail,
-          availableQuantity: product.availableQuantity,
-          isAvailabled: true,
-        }
-      }
-    );
+    // const existing
+    addToCartItem({
+      cartItemId: Date.now(),
+      productId: product.id,
+      quantity: quantity,
+      product: {
+        id: product.id,
+        title: product.title,
+        unitPrice: product.unitPrice,
+        thumbnail: product.thumbnail,
+        availableQuantity: product.availableQuantity,
+        isAvailabled: true,
+      },
+    });
     toast.success(
       `${product.title} x ${quantity} has been added to your cart.`,
     );
@@ -171,12 +171,12 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={handlePrePurchase}
-                  className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-orange-500 px-6 text-sm font-semibold text-white transition hover:bg-orange-600"
-                >
-                  Purchase
-                </button>
+              <button
+                onClick={handlePrePurchase}
+                className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-orange-500 px-6 text-sm font-semibold text-white transition hover:bg-orange-600"
+              >
+                Purchase
+              </button>
               <button
                 onClick={handleAddToCart}
                 className="inline-flex h-14 flex-1 items-center justify-center rounded-full border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
