@@ -18,25 +18,21 @@ export default function CartPage() {
 
   useEffect(() => {
     setItems(cartItems);
-  }, [items]);
+  }, [addToCartItem]);
 
   const handleQtyChange = (id: number, qty: number) => {
     const currentItem = items.find((item) => item.cartItemId === id);
     if (!currentItem) return;
     if (
-      qty > items.find((item) => item.cartItemId === id)?.product.availableQuantity!
+      qty > currentItem.product.availableQuantity
     ) {
       alert("Quantity exceeds available stock.");
       return;
     }
+    currentItem.quantity = qty;
 
-    setItems((prev) =>
-      prev.map((it) => (it.cartItemId === id ? { ...it, quantity: qty } : it)),
-    );
-    const quantityDifference = qty - currentItem.quantity;
-    const currnetProduct = items.find((item) => item.cartItemId == id);
-    if (quantityDifference > 0 && currnetProduct) {
-      addToCartItem(currnetProduct);
+    if (currentItem) {
+      addToCartItem(currentItem);
     }
   };
 

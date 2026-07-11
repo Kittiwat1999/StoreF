@@ -50,7 +50,7 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
         ? [...prev, item]
         : prev.map((it) =>
             it.cartItemId === existing.cartItemId
-              ? { ...it, quantity: it.quantity + item.quantity }
+              ? { ...item }
               : it
           );
       saveToLocalStorage<CartItem[]>("cartItems", newArr);
