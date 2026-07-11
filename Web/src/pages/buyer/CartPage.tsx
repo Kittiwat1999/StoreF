@@ -2,31 +2,26 @@ import { FiShoppingBag } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import CartList from "../../components/buyers/CartList";
 import RemoveConfirmModal from "../../components/buyers/RemoveConfirmModal";
-// import cartApi from "../../api/cartApi";
 import { useBuyerState } from "../../contexts/BuyerStateContext";
-// import { toast } from "react-hot-toast";
-import {type CartItem} from "../../types/cart";
+import { type CartItem } from "../../types/cart";
+import { saveToLocalStorage } from "../../utils/localStorageHelper";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [itemsCheckedList, setItemCheckedList] = useState<number[]>([]);
+  const [itemsSelectedList, setItemSlectedList] = useState<number[]>([]);
   const [pendingRemove, setPendingRemove] = useState<CartItem | null>(null);
-  const {
-    addToCartItem,
-    removeFromCartItem,
-    cartItems,
-  } = useBuyerState();
+  const { addToCartItem, removeFromCartItem, cartItems } = useBuyerState();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setItems(cartItems);
   }, [addToCartItem]);
 
-  const handleQtyChange = (id: number, qty: number) => {  
+  const handleQtyChange = (id: number, qty: number) => {
     const currentItem = items.find((item) => item.cartItemId === id);
     if (!currentItem) return;
-    if (
-      qty > currentItem.product.availableQuantity
-    ) {
+    if (qty > currentItem.product.availableQuantity) {
       alert("Quantity exceeds available stock.");
       return;
     }
@@ -47,42 +42,22 @@ export default function CartPage() {
   };
 
   const handleCheckedItem = (id: number, checked: boolean) => {
-    setItemCheckedList((prev) => {
+    setItemSlectedList((prev) => {
       if (checked) {
         return prev.includes(id) ? prev : [...prev, id];
       }
       return prev.filter((itemId) => itemId !== id);
     });
-
   };
-    console.log(itemsCheckedList);
 
-  // const handleConfirmPurchase = () => {
-  //   addOrder();
-  //   resetCart();
-  //   setItems([]);
-  //   toast.success("Purchase confirmed");
-  //   setPurchaseModalOpen(false);
-  // };
+  const handlePurchase = () => {
+    saveToLocalStorage<number[]>("purchaseItemsSelected", itemsSelectedList);
+    navigate("/cart/confirm-purchase");
+  };
 
-  // const handleConfirmPurchase = (quantity: number) => {
-  //   navigate(`/confirm/${product.id}`, {
-  //     state: {
-  //       productId: product.id,
-  //       quantity: quantity,
-  //       title: product.title,
-  //       thumbnail: product.thumbnail,
-  //       unitPrice: product.unitPrice,
-  //     },
-  //   });
-  // };
-
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.unitPrice * item.quantity,
-    0,
-  );
-  const shipping = items.length > 0 ? 4.99 : 0;
-  const total = subtotal + shipping;
+  const total = items
+    .filter((item) => itemsSelectedList.includes(item.cartItemId))
+    .reduce((sum, item) => sum + item.product.unitPrice * item.quantity, 0);
   const isEmpty = items.length === 0;
   const hasOutOfStockItems = items.some(
     (item) => (item.product.availableQuantity ?? 0) <= 0,
@@ -128,7 +103,7 @@ export default function CartPage() {
                 {items.map((it) => (
                   <CartList
                     key={it.cartItemId}
-                    checked={itemsCheckedList.includes(it.cartItemId)}
+                    checked={itemsSelectedList.includes(it.cartItemId)}
                     onItemChecked={handleCheckedItem}
                     item={it}
                     onChange={(qty) => handleQtyChange(it.cartItemId, qty)}
@@ -145,12 +120,8 @@ export default function CartPage() {
             </h2>
             <div className="mt-5 space-y-3 text-sm text-slate-600">
               <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>{items.length > 0 ? "$4.99" : "$0.00"}</span>
+                <span>Selected</span>
+                <span>{itemsSelectedList.length}</span>
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
                 <span>Total</span>
@@ -158,7 +129,7 @@ export default function CartPage() {
               </div>
             </div>
             <button
-              // onClick={() => setPurchaseModalOpen(true)}
+              onClick={handlePurchase}
               disabled={isEmpty || hasOutOfStockItems}
               className="mt-6 w-full rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
@@ -183,14 +154,6 @@ export default function CartPage() {
           pendingRemove && handleRemove(pendingRemove.cartItemId as number)
         }
       />
-
-      {/* <PurchaseConfirmModal
-        open={purchaseModalOpen}
-        items={items}
-        total={total}
-        onClose={() => setPurchaseModalOpen(false)}
-        onConfirm={() => handleConfirmPurchase()}
-      /> */}
     </main>
   );
 }

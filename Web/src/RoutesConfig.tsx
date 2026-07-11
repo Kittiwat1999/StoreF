@@ -13,6 +13,7 @@ import SignUpSellerPage from "./pages/SignUpSellerPage";
 import SellerProductsPage from "./pages/seller/SellerProductsPage";
 import SellerOrdersPage from "./pages/seller/SellerOrdersPage";
 import ConfirmPurchaseProduct from "./pages/buyer/ConfirmPurchaseProduct";
+import CartConfirmPurchase from "./pages/buyer/CartConfirmPurchase"
 
 function BuyerLayout() {
   return (
@@ -48,6 +49,8 @@ export default function RoutesConfig() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/confirm" element={<ConfirmPurchaseProduct />} />
+        <Route path="/cart/confirm-purchase" element={<CartConfirmPurchase />} />
+
       </Route>
 
       <Route element={<SellerLayout />}>

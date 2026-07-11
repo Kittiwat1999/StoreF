@@ -1,33 +1,57 @@
-import {useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { loadFromLocalStorage } from "../../utils/localStorageHelper";
+import { useBuyerState } from "../../contexts/BuyerStateContext";
+
 import OrderConfirmList, {
   type ConfirmPurchaseItemType,
 } from "../../components/buyers/ConfirmPurchaseItem";
-import { loadFromLocalStorage } from "../../utils/localStorageHelper";
+
 export interface ConfirmPurchaseType {
   items: ConfirmPurchaseItemType;
 }
-
-export default function ConfirmPurchaseProduct() {
-  const [item, setItem] = useState<ConfirmPurchaseItemType | null>(
-    loadFromLocalStorage<ConfirmPurchaseItemType>("prePurchaseItem")
+export default function CartConfirmPurchase() {
+  const [selectedItems, setSelectedItem] = useState<number[] | null>(
+    loadFromLocalStorage<number[]>("purchaseItemsSelected"),
   );
+  const [prePurchaseItem, setPrepurchaseItem] = useState<
+    ConfirmPurchaseItemType[]
+  >([]);
+  const { cartItems } = useBuyerState();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setItem(loadFromLocalStorage<ConfirmPurchaseItemType>("prePurchaseItem"));
-  }, []);
+    const storedSelected = loadFromLocalStorage<number[]>(
+      "purchaseItemsSelected",
+    );
+    setSelectedItem(storedSelected);
 
-  const navigate = useNavigate();
+    const mappedItems = cartItems
+      .filter((item) => storedSelected?.includes(item.cartItemId))
+      .map((it) => ({
+        id: it.product.id,
+        title: it.product.title,
+        unitPrice: it.product.unitPrice,
+        thumbnail: it.product.thumbnail,
+        quantity: it.quantity,
+      }));
+
+    setPrepurchaseItem(mappedItems);
+  }, [cartItems]);
+
   const [shipping] = useState(20);
-  const subTotal = item ? item.unitPrice * item.quantity : undefined;
-  const total = item && subTotal ? subTotal + shipping : undefined;
+
+  const subTotal = prePurchaseItem.reduce(
+    (sum, it) => (sum += it.quantity * it.unitPrice),
+    0,
+  );
+  const total = subTotal + shipping;
 
   const onConfirm = () => {
     console.log("Purchase confirmed!");
     alert("Purchase confirmed!");
     navigate("/orders");
   };
-
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6">
@@ -41,14 +65,17 @@ export default function ConfirmPurchaseProduct() {
               Review Your Items
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Please check the products in your order and verify the quantities, prices, and total amount before placing your purchase.
+              Please check the products in your order and verify the quantities,
+              prices, and total amount before placing your purchase.
             </p>
           </div>
         </div>
-        <div className="rounded-4xl border border-slate-200 bg-white p-2 shadow-sm sm:p-3">
+        <div className="rounded-4xl border border-slate-200 bg-white p-2 sm:p-3">
           <div className="2 space-y-4 p-2">
-            <div className="divide-y divide-slate-200 overflow-hidden rounded-3xl border-slate-400 bg-slate-50 shadow-sm">
-              {item && <OrderConfirmList key={item.id} item={item} />}
+            <div className="divide-y divide-slate-200 overflow-hidden">
+              {prePurchaseItem.map((item) => (
+                <OrderConfirmList key={item.id} item={item} />
+              ))}
             </div>
 
             <div className="p-2">
@@ -56,6 +83,13 @@ export default function ConfirmPurchaseProduct() {
                 Order summary
               </h2>
               <div className="mt-5 space-y-3 text-sm text-slate-600">
+                <div className="flex justify-between">
+                  <span>
+                    Item{selectedItems && selectedItems?.length > 1 ? "s" : ""}{" "}
+                    count
+                  </span>
+                  <span>{selectedItems?.length}</span>
+                </div>
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span>{subTotal && subTotal.toFixed(2)}</span>

@@ -9,7 +9,7 @@ export default function OrderDetailItem({
   item: OrderDetailItemType;
 }) {
   return (
-    <li className="flex items-center gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+    <li className="flex items-center gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4 mb-2">
       <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100">
         {item.thumbnail ? (
           <img

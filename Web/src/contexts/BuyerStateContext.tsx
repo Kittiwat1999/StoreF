@@ -12,7 +12,6 @@ import cartApi from "../api/cartApi";
 import { saveToLocalStorage, loadFromLocalStorage } from "../utils/localStorageHelper";
 
 interface BuyerStateValue {
-  // poroductonCart: Array<string>;
   cartCount: number;
   orderCount: number;
   cartItems: CartItem[];
@@ -27,11 +26,9 @@ interface BuyerStateValue {
 const BuyerStateContext = createContext<BuyerStateValue | undefined>(undefined);
 
 export function BuyerStateProvider({ children }: { children: ReactNode }) {
-  // const [poroductonCart, setCartItems] = useState<Array<string>>(["uuid2", "uuid1", "uuid3"]);
   const [orderCount, setOrderCount] = useState(3);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = useMemo(() => cartItems.length, [cartItems]);
-
   useEffect(() => {
     const items = loadFromLocalStorage<CartItem[]>("cartItems");
     if (items && items.length) {
@@ -86,7 +83,6 @@ export function BuyerStateProvider({ children }: { children: ReactNode }) {
   return (
     <BuyerStateContext.Provider
       value={{
-        // poroductonCart,
         cartCount,
         orderCount,
         cartItems,
