@@ -1,8 +1,5 @@
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { BuyerStateProvider } from "./contexts/BuyerStateContext";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import BuyerNav from "./components/buyers/BuyerNav";
-import SellerNav from "./components/sellers/SellerNav";
 import ProductsPage from "./pages/buyer/ProductsPage";
 import ProductDetailPage from "./pages/buyer/ProductDetailPage";
 import CartPage from "./pages/buyer/CartPage";
@@ -13,27 +10,9 @@ import SignUpSellerPage from "./pages/SignUpSellerPage";
 import SellerProductsPage from "./pages/seller/SellerProductsPage";
 import SellerOrdersPage from "./pages/seller/SellerOrdersPage";
 import ConfirmPurchaseProduct from "./pages/buyer/ConfirmPurchaseProduct";
-import CartConfirmPurchase from "./pages/buyer/CartConfirmPurchase"
-
-function BuyerLayout() {
-  return (
-    <BuyerStateProvider>
-      <div className="min-h-screen bg-slate-50 text-slate-950">
-        <BuyerNav userName="Kittiwat" />
-        <Outlet />
-      </div>
-    </BuyerStateProvider>
-  );
-}
-
-function SellerLayout() {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <SellerNav userName="Kittiwat" />
-      <Outlet />
-    </div>
-  );
-}
+import CartConfirmPurchase from "./pages/buyer/CartConfirmPurchase";
+import BuyerLayout from "./layouts/BuyerLayout";
+import SellerLayout from "./layouts/SellerLayout";
 
 export default function RoutesConfig() {
   return (
@@ -49,19 +28,14 @@ export default function RoutesConfig() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/confirm" element={<ConfirmPurchaseProduct />} />
-        <Route path="/cart/confirm-purchase" element={<CartConfirmPurchase />} />
-
+        <Route
+          path="/cart/confirm-purchase"
+          element={<CartConfirmPurchase />}
+        />
       </Route>
-
       <Route element={<SellerLayout />}>
-        <Route
-          path="/seller/products"
-          element={<SellerProductsPage />}
-          />
-        <Route
-          path="/seller/orders"
-          element={<SellerOrdersPage />}
-          />
+        <Route path="/seller/products" element={<SellerProductsPage />} />
+        <Route path="/seller/orders" element={<SellerOrdersPage />} />
       </Route>
     </Routes>
   );
