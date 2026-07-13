@@ -9,8 +9,8 @@ import SignUpBuyerPage from "./pages/SignUpBuyerPage";
 import SignUpSellerPage from "./pages/SignUpSellerPage";
 import SellerProductsPage from "./pages/seller/SellerProductsPage";
 import SellerOrdersPage from "./pages/seller/SellerOrdersPage";
-import ConfirmPurchaseProduct from "./pages/buyer/ConfirmPurchaseProduct";
-import CartConfirmPurchase from "./pages/buyer/CartConfirmPurchase";
+import ConfirmPurchaseProductPage from "./pages/buyer/ConfirmPurchaseProductPage";
+import CartConfirmPurchasePage from "./pages/buyer/CartConfirmPurchasePage";
 import BuyerLayout from "./layouts/BuyerLayout";
 import SellerLayout from "./layouts/SellerLayout";
 
@@ -27,10 +27,10 @@ export default function RoutesConfig() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/orders" element={<OrdersPage />} />
-        <Route path="/confirm" element={<ConfirmPurchaseProduct />} />
+        <Route path="/confirm" element={<ConfirmPurchaseProductPage />} />
         <Route
           path="/cart/confirm-purchase"
-          element={<CartConfirmPurchase />}
+          element={<CartConfirmPurchasePage />}
         />
       </Route>
       <Route element={<SellerLayout />}>
