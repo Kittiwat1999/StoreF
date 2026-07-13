@@ -1,17 +1,37 @@
-import {useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { defaultAddresses, type BuyerAddress } from "../../types/address";
+import AddressForm from "../../components/buyers/AddressForm";
+import BuyerAddressSelect from "../../components/buyers/BuyerAddressSelect";
 import OrderConfirmList, {
   type ConfirmPurchaseItemType,
 } from "../../components/buyers/ConfirmPurchaseItem";
 import { loadFromLocalStorage } from "../../utils/localStorageHelper";
+
 export interface ConfirmPurchaseType {
   items: ConfirmPurchaseItemType;
 }
 
+const emptyAddressForm = (): BuyerAddress => ({
+  id: Date.now().toString(),
+  recipientName: "",
+  phoneNumber: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  province: "",
+  postalCode: "",
+  country: "",
+});
+
 export default function ConfirmPurchaseProduct() {
   const [item, setItem] = useState<ConfirmPurchaseItemType | null>(
-    loadFromLocalStorage<ConfirmPurchaseItemType>("prePurchaseItem")
+    loadFromLocalStorage<ConfirmPurchaseItemType>("prePurchaseItem"),
   );
+
+  const [addressForm, setAddressForm] =
+    useState<BuyerAddress>(emptyAddressForm);
 
   useEffect(() => {
     setItem(loadFromLocalStorage<ConfirmPurchaseItemType>("prePurchaseItem"));
@@ -28,6 +48,12 @@ export default function ConfirmPurchaseProduct() {
     navigate("/orders");
   };
 
+  const handleAddressFormChange = (
+    field: keyof BuyerAddress,
+    value: string,
+  ) => {
+    setAddressForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6">
@@ -41,15 +67,25 @@ export default function ConfirmPurchaseProduct() {
               Review Your Items
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Please check the products in your order and verify the quantities, prices, and total amount before placing your purchase.
+              Please check the products in your order and verify the quantities,
+              prices, and total amount before placing your purchase.
             </p>
           </div>
         </div>
-        <div className="rounded-4xl border border-slate-200 bg-white p-2 shadow-sm sm:p-3">
-          <div className="2 space-y-4 p-2">
-            <div className="divide-y divide-slate-200 overflow-hidden rounded-3xl border-slate-400 bg-slate-50 shadow-sm">
+        <div className="rounded-4xl bg-white p-2 sm:p-3">
+          <div className="space-y-4 p-2">
+            <div className="divide-y divide-slate-200 overflow-hidden rounded-3xl bg-white">
               {item && <OrderConfirmList key={item.id} item={item} />}
             </div>
+
+            {defaultAddresses.length > 0 ? (
+              <BuyerAddressSelect addresses={defaultAddresses} />
+            ) : (
+              <AddressForm
+                addressForm={addressForm}
+                handleFormChange={handleAddressFormChange}
+              />
+            )}
 
             <div className="p-2">
               <h2 className="text-lg font-semibold text-slate-900">
