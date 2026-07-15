@@ -1,42 +1,45 @@
 version: "3.9"
 name: "StoreFrontManagement"
 services:
-  # web:
-  #   build:
-  #     context: ./Web
-  #     dockerfile: Dockerfile
-  #   container_name: Web
-  #   env_file:
-  #     - ./.env
-  #   volumes:
-  #     - ./Web:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - "${VITE_PORT}:5173"
-  #   command: npm run dev -- --host 0.0.0.0 --port 5173
-  #   networks:
-  #     - app_network
+  web:
+    build:
+      context: ./Web
+      dockerfile: Dockerfile
+    container_name: storef-web
+    env_file:
+      - ./.env
+    volumes:
+      - ./Web:/app
+      - /app/node_modules
+    ports:
+      - "${VITE_PORT}:5173"
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    networks:
+      - app_network
 
-  # api:
-  #   build:
-  #     context: ./Api
-  #     dockerfile: Dockerfile
-  #   container_name: Api
-  #   env_file:
-  #     - ./.env
-  #   volumes:
-  #     - ./Api:/app
-  #   ports:
-  #     - "8000:8000"
-  #   command: python manage.py runserver 0.0.0.0:8000
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - app_network
+  api:
+    build:
+      context: ./StoreF
+      dockerfile: Dockerfile
+    container_name: storef-api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ConnectionStrings__DefaultConnection: >-
+        Host=db;Port=5432;Database=${DB_NAME};
+        Username=${DB_USER};Password=${DB_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET}
+      ASPNETCORE_URLS: http://+:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - app_network
 
   db:
     image: postgres:15
-    container_name: postgres
+    container_name: storef-postgres
     env_file:
       - ./.env
     environment:
@@ -52,7 +55,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
+    container_name: storef-pgadmin
     env_file:
       - ./.env
     environment:
@@ -67,18 +70,20 @@ services:
     networks:
       - app_network
 
-  # nginx:
-  #   image: nginx:alpine
-  #   container_name: nginx
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - web
-  #     - api
-  #   networks:
-  #     - app_network
+  nginx:
+    image: nginx:alpine
+    container_name: storef-nginx
+    restart: unless-stopped
+    depends_on:
+      - api
+      - web
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+
 volumes:
   postgres_data:
   pgadmin_data:

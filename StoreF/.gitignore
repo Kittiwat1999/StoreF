@@ -1,0 +1,18 @@
+## --- Build artifacts ---
+bin/
+obj/
+out/
+
+## --- IDE / editor ---
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## --- Secrets / environment ---
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/secrets.json

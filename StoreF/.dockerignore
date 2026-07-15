@@ -1,0 +1,41 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# IDE / editor
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# Env / secrets
+**/.env
+**/appsettings.Development.json
+**/secrets.json
+
+# Tests (do not include in production image)
+**/*Tests/
+**/*.Tests/
+
+# Docs
+**/*.md
+README.md
+
+# OS junk
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/*.log

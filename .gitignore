@@ -36,3 +36,8 @@ docker-compose.yml
 # Agents.md file
 AGENTS.md
 GEMINI.md
+
+# EF Core Migrations
+StoreF/**/Migrations/
+
+*.log
