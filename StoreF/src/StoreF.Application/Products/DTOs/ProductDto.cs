@@ -2,13 +2,14 @@
 namespace StoreF.Application.Products.DTOs;
 
 public record ProductDto(
-    int Id,
+    Guid Id,
     Guid SellerId,
     string Title,
     string Description,
     decimal UnitPrice,
     int QuantityAvailable,
-    string? ImageUrl
+    string? ImageUrl,
+    string? ThumbNailUrl
 );
 
 public record CreateProductDto(
@@ -16,7 +17,8 @@ public record CreateProductDto(
     string Description,
     decimal UnitPrice,
     int QuantityAvailable,
-    string? ImageUrl
+    string? ImageUrl,
+    bool Available
 );
 
 public record UpdateProductDto(
@@ -24,5 +26,6 @@ public record UpdateProductDto(
     string Description,
     decimal UnitPrice,
     int QuantityAvailable,
-    string? ImageUrl
+    string? ImageUrl,
+    bool Available
 );

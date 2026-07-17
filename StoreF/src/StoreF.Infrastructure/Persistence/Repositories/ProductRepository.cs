@@ -15,9 +15,12 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task<List<Product>> GetAllAsync(CancellationToken ct = default) =>
-        await _context.Products.AsNoTracking().ToListAsync(ct);
+        await _context.Products
+        .AsNoTracking()
+        .Where(p => p.Available)
+        .ToListAsync(ct);
 
-    public async Task<Product?> GetByIdAsync(int id, CancellationToken ct = default) =>
+    public async Task<Product?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await _context.Products.FirstOrDefaultAsync(p => p.Id == id, ct);
 
     public async Task AddAsync(Product product, CancellationToken ct = default) =>

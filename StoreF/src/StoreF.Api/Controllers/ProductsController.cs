@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StoreF.Application.Products;
 using StoreF.Application.Products.DTOs;
+using StoreF.Application.Common.Exceptions;
 
 namespace StoreF.Api.Controllers;
 
@@ -23,25 +24,35 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<ProductDto>> GetById(int id, CancellationToken ct)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken ct)
     {
         var product = await _service.GetByIdAsync(id, ct);
         return product is null ? NotFound() : Ok(product);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductDto>> Create(CreateProductDto dto, CancellationToken ct)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ProductDto>> Create(
+        [FromForm] CreateProductDto dto, IFormFile? image, CancellationToken ct)
     {
-        // TODO: Extract sellerId from JWT claims instead of this mock value after Auth is complete
-        var mockSellerId = Guid.NewGuid();
+        // var sellerId = Guid.Parse(User.FindFirst("sub")!.Value);
+        var sellerId = Guid.NewGuid();
+        Stream? stream = image?.OpenReadStream();
 
-        var created = await _service.CreateAsync(mockSellerId, dto, ct);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var created = await _service.CreateAsync(sellerId, dto, stream, image?.FileName, image?.Length, ct);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (ImageValidationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<ProductDto>> Update(int id, UpdateProductDto dto, CancellationToken ct)
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ProductDto>> Update(Guid id, UpdateProductDto dto, CancellationToken ct)
     {
         var mockSellerId = Guid.NewGuid(); // TODO: from JWT
 
@@ -56,8 +67,8 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var mockSellerId = Guid.NewGuid(); // TODO: from JWT
 
