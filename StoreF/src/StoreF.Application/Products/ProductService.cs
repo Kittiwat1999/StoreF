@@ -65,8 +65,18 @@ public class ProductService
     }
 
 
-    public async Task<ProductDto?> UpdateAsync(Guid id, Guid sellerId, UpdateProductDto dto, CancellationToken ct = default)
+    public async Task<ProductDto?> UpdateAsync(Guid id, Guid sellerId, UpdateProductDto dto, Stream? imageStream, string? fileName, long? fileSize, CancellationToken ct = default)
     {
+        if (imageStream is not null)
+        {
+            if (fileSize is > MaxImageSizeBytes)
+                throw new ImageValidationException($"Image must be under {MaxImageSizeBytes / 1024 / 1024}MB.");
+
+            var ext = Path.GetExtension(fileName ?? "").ToLowerInvariant();
+            if (!AllowedExtensions.Contains(ext))
+                throw new ImageValidationException("Only .jpg, .jpeg, .png, .webp files are allowed.");
+        }
+
         var product = await _repository.GetByIdAsync(id, ct);
         if (product is null) return null;
         if (product.SellerId != sellerId)
@@ -76,8 +86,14 @@ public class ProductService
         product.Description = dto.Description;
         product.UnitPrice = dto.UnitPrice;
         product.QuantityAvailable = dto.QuantityAvailable;
-        product.ImageUrl = dto.ImageUrl;
         product.UpdatedAt = DateTime.UtcNow;
+
+        if (imageStream is not null && fileName is not null)
+        {
+            var result = await _imageStorage.SaveAsync(imageStream, fileName, ct);
+            product.ImageUrl = result.ImageUrl;
+            product.ThumbnailUrl = result.ThumbnailUrl;
+        }
 
         _repository.Update(product);
         await _repository.SaveChangesAsync(ct);

@@ -52,13 +52,14 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ProductDto>> Update(Guid id, UpdateProductDto dto, CancellationToken ct)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ProductDto>> Update(Guid id, [FromForm] UpdateProductDto dto, IFormFile? image, CancellationToken ct)
     {
         var mockSellerId = Guid.NewGuid(); // TODO: from JWT
-
+        Stream? stream = image?.OpenReadStream();
         try
         {
-            var updated = await _service.UpdateAsync(id, mockSellerId, dto, ct);
+            var updated = await _service.UpdateAsync(id, mockSellerId, dto, stream, image?.FileName, image?.Length, ct);
             return updated is null ? NotFound() : Ok(updated);
         }
         catch (UnauthorizedAccessException)
