@@ -84,7 +84,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT}:5431"
+      - "${DB_PORT}:5432"
     networks:
       - app_network
 
